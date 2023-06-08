@@ -9,22 +9,28 @@
 /* Begin PBXBuildFile section */
 		B4402C032A31BEB300B1CC46 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4402C022A31BEB300B1CC46 /* AppDelegate.swift */; };
 		B4402C052A31BEB300B1CC46 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4402C042A31BEB300B1CC46 /* SceneDelegate.swift */; };
-		B4402C072A31BEB300B1CC46 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4402C062A31BEB300B1CC46 /* MainViewController.swift */; };
+		B4402C072A31BEB300B1CC46 /* MediaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4402C062A31BEB300B1CC46 /* MediaViewController.swift */; };
 		B4402C0C2A31BEB500B1CC46 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B4402C0B2A31BEB500B1CC46 /* Assets.xcassets */; };
 		B4402C0F2A31BEB500B1CC46 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B4402C0D2A31BEB500B1CC46 /* LaunchScreen.storyboard */; };
 		B490B7822A31C19D004F6F15 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = B490B7812A31C19D004F6F15 /* SnapKit */; };
 		B490B7842A31C3CD004F6F15 /* PlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B490B7832A31C3CD004F6F15 /* PlayerViewController.swift */; };
+		B490B7862A31DEBF004F6F15 /* MusicTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B490B7852A31DEBF004F6F15 /* MusicTableViewCell.swift */; };
+		B490B7882A325EE0004F6F15 /* AudioFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = B490B7872A325EE0004F6F15 /* AudioFile.swift */; };
+		B490B78A2A325EFF004F6F15 /* AudioPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B490B7892A325EFF004F6F15 /* AudioPlayer.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		B4402BFF2A31BEB300B1CC46 /* Player.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Player.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B4402C022A31BEB300B1CC46 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B4402C042A31BEB300B1CC46 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		B4402C062A31BEB300B1CC46 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
+		B4402C062A31BEB300B1CC46 /* MediaViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaViewController.swift; sourceTree = "<group>"; };
 		B4402C0B2A31BEB500B1CC46 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B4402C0E2A31BEB500B1CC46 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		B4402C102A31BEB500B1CC46 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B490B7832A31C3CD004F6F15 /* PlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerViewController.swift; sourceTree = "<group>"; };
+		B490B7852A31DEBF004F6F15 /* MusicTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicTableViewCell.swift; sourceTree = "<group>"; };
+		B490B7872A325EE0004F6F15 /* AudioFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioFile.swift; sourceTree = "<group>"; };
+		B490B7892A325EFF004F6F15 /* AudioPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,11 +66,14 @@
 			children = (
 				B4402C022A31BEB300B1CC46 /* AppDelegate.swift */,
 				B4402C042A31BEB300B1CC46 /* SceneDelegate.swift */,
-				B4402C062A31BEB300B1CC46 /* MainViewController.swift */,
+				B4402C062A31BEB300B1CC46 /* MediaViewController.swift */,
+				B490B7852A31DEBF004F6F15 /* MusicTableViewCell.swift */,
 				B490B7832A31C3CD004F6F15 /* PlayerViewController.swift */,
 				B4402C0B2A31BEB500B1CC46 /* Assets.xcassets */,
 				B4402C0D2A31BEB500B1CC46 /* LaunchScreen.storyboard */,
 				B4402C102A31BEB500B1CC46 /* Info.plist */,
+				B490B7872A325EE0004F6F15 /* AudioFile.swift */,
+				B490B7892A325EFF004F6F15 /* AudioPlayer.swift */,
 			);
 			path = Player;
 			sourceTree = "<group>";
@@ -145,10 +154,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B4402C072A31BEB300B1CC46 /* MainViewController.swift in Sources */,
+				B490B7882A325EE0004F6F15 /* AudioFile.swift in Sources */,
+				B490B7862A31DEBF004F6F15 /* MusicTableViewCell.swift in Sources */,
+				B4402C072A31BEB300B1CC46 /* MediaViewController.swift in Sources */,
 				B490B7842A31C3CD004F6F15 /* PlayerViewController.swift in Sources */,
 				B4402C032A31BEB300B1CC46 /* AppDelegate.swift in Sources */,
 				B4402C052A31BEB300B1CC46 /* SceneDelegate.swift in Sources */,
+				B490B78A2A325EFF004F6F15 /* AudioPlayer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -216,7 +228,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -270,7 +282,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;

@@ -15,8 +15,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: windowScene)
-        let mainViewController = UINavigationController(rootViewController: MainViewController())
-        mainViewController.tabBarItem = UITabBarItem(title: "Main",
+        setupView()
+    }
+
+    func setupView() {
+        let mainViewController = UINavigationController(rootViewController: MediaViewController())
+        mainViewController.tabBarItem = UITabBarItem(title: "Media",
                                                      image: UIImage(systemName: "music.note.list"),
                                                      tag: 0)
         let playerViewController = UINavigationController(rootViewController: PlayerViewController())
@@ -31,7 +35,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.rootViewController = tabBarController
         window?.makeKeyAndVisible()
     }
-
+    
     func sceneDidDisconnect(_ scene: UIScene) {
         // Called as the scene is being released by the system.
         // This occurs shortly after the scene enters the background, or when its session is discarded.
