@@ -15,8 +15,11 @@
 		B490B7822A31C19D004F6F15 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = B490B7812A31C19D004F6F15 /* SnapKit */; };
 		B490B7842A31C3CD004F6F15 /* PlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B490B7832A31C3CD004F6F15 /* PlayerViewController.swift */; };
 		B490B7862A31DEBF004F6F15 /* MusicTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B490B7852A31DEBF004F6F15 /* MusicTableViewCell.swift */; };
-		B490B7882A325EE0004F6F15 /* AudioFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = B490B7872A325EE0004F6F15 /* AudioFile.swift */; };
+		B490B7882A325EE0004F6F15 /* Audio.swift in Sources */ = {isa = PBXBuildFile; fileRef = B490B7872A325EE0004F6F15 /* Audio.swift */; };
 		B490B78A2A325EFF004F6F15 /* AudioPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B490B7892A325EFF004F6F15 /* AudioPlayer.swift */; };
+		B490B78C2A3268B2004F6F15 /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B490B78B2A3268B2004F6F15 /* SearchViewController.swift */; };
+		B490B7932A33BE9E004F6F15 /* AudioFile.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = B490B7912A33BE9D004F6F15 /* AudioFile.xcdatamodeld */; };
+		B490B7952A33BF12004F6F15 /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B490B7942A33BF12004F6F15 /* StorageManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,8 +32,11 @@
 		B4402C102A31BEB500B1CC46 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B490B7832A31C3CD004F6F15 /* PlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerViewController.swift; sourceTree = "<group>"; };
 		B490B7852A31DEBF004F6F15 /* MusicTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicTableViewCell.swift; sourceTree = "<group>"; };
-		B490B7872A325EE0004F6F15 /* AudioFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioFile.swift; sourceTree = "<group>"; };
+		B490B7872A325EE0004F6F15 /* Audio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Audio.swift; sourceTree = "<group>"; };
 		B490B7892A325EFF004F6F15 /* AudioPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayer.swift; sourceTree = "<group>"; };
+		B490B78B2A3268B2004F6F15 /* SearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
+		B490B7922A33BE9E004F6F15 /* AudioFile.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = AudioFile.xcdatamodel; sourceTree = "<group>"; };
+		B490B7942A33BF12004F6F15 /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,16 +72,51 @@
 			children = (
 				B4402C022A31BEB300B1CC46 /* AppDelegate.swift */,
 				B4402C042A31BEB300B1CC46 /* SceneDelegate.swift */,
-				B4402C062A31BEB300B1CC46 /* MediaViewController.swift */,
-				B490B7852A31DEBF004F6F15 /* MusicTableViewCell.swift */,
-				B490B7832A31C3CD004F6F15 /* PlayerViewController.swift */,
+				B490B7902A326947004F6F15 /* ViewControllers */,
+				B490B78F2A32693B004F6F15 /* Views */,
+				B490B78D2A32691F004F6F15 /* Models */,
+				B490B78E2A32692B004F6F15 /* Managers */,
 				B4402C0B2A31BEB500B1CC46 /* Assets.xcassets */,
-				B4402C0D2A31BEB500B1CC46 /* LaunchScreen.storyboard */,
 				B4402C102A31BEB500B1CC46 /* Info.plist */,
-				B490B7872A325EE0004F6F15 /* AudioFile.swift */,
-				B490B7892A325EFF004F6F15 /* AudioPlayer.swift */,
+				B4402C0D2A31BEB500B1CC46 /* LaunchScreen.storyboard */,
+				B490B7912A33BE9D004F6F15 /* AudioFile.xcdatamodeld */,
+				B490B7942A33BF12004F6F15 /* StorageManager.swift */,
 			);
 			path = Player;
+			sourceTree = "<group>";
+		};
+		B490B78D2A32691F004F6F15 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				B490B7872A325EE0004F6F15 /* Audio.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		B490B78E2A32692B004F6F15 /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				B490B7892A325EFF004F6F15 /* AudioPlayer.swift */,
+			);
+			path = Managers;
+			sourceTree = "<group>";
+		};
+		B490B78F2A32693B004F6F15 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				B490B7852A31DEBF004F6F15 /* MusicTableViewCell.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		B490B7902A326947004F6F15 /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				B4402C062A31BEB300B1CC46 /* MediaViewController.swift */,
+				B490B7832A31C3CD004F6F15 /* PlayerViewController.swift */,
+				B490B78B2A3268B2004F6F15 /* SearchViewController.swift */,
+			);
+			path = ViewControllers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -154,12 +195,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B490B7882A325EE0004F6F15 /* AudioFile.swift in Sources */,
+				B490B7882A325EE0004F6F15 /* Audio.swift in Sources */,
 				B490B7862A31DEBF004F6F15 /* MusicTableViewCell.swift in Sources */,
+				B490B78C2A3268B2004F6F15 /* SearchViewController.swift in Sources */,
 				B4402C072A31BEB300B1CC46 /* MediaViewController.swift in Sources */,
 				B490B7842A31C3CD004F6F15 /* PlayerViewController.swift in Sources */,
 				B4402C032A31BEB300B1CC46 /* AppDelegate.swift in Sources */,
 				B4402C052A31BEB300B1CC46 /* SceneDelegate.swift in Sources */,
+				B490B7952A33BF12004F6F15 /* StorageManager.swift in Sources */,
+				B490B7932A33BE9E004F6F15 /* AudioFile.xcdatamodeld in Sources */,
 				B490B78A2A325EFF004F6F15 /* AudioPlayer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -387,6 +431,19 @@
 			productName = SnapKit;
 		};
 /* End XCSwiftPackageProductDependency section */
+
+/* Begin XCVersionGroup section */
+		B490B7912A33BE9D004F6F15 /* AudioFile.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				B490B7922A33BE9E004F6F15 /* AudioFile.xcdatamodel */,
+			);
+			currentVersion = B490B7922A33BE9E004F6F15 /* AudioFile.xcdatamodel */;
+			path = AudioFile.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = B4402BF72A31BEB300B1CC46 /* Project object */;
 }

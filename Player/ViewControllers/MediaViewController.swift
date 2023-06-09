@@ -2,9 +2,12 @@ import UIKit
 import SnapKit
 import MobileCoreServices
 import UniformTypeIdentifiers
+import AVFoundation
+import CoreData
 
 class MediaViewController: UIViewController, UIDocumentPickerDelegate {
     let tableView = UITableView()
+    // Change there (input coreData)
     private var audioFiles: [AudioFile] = []
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -60,6 +63,34 @@ extension MediaViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = MusicTableViewCell(style: .default, reuseIdentifier: "MusicCell")
         cell.titleLabel.text = audioFiles[indexPath.row].fileName
+        let audioURL = URL(filePath: audioFiles[indexPath.row].filePath)
+        Task {
+            if let artworkImage = await extractAlbumArtwork(from: audioURL) {
+                DispatchQueue.main.async {
+                    cell.image.image = artworkImage
+                }
+            }
+        }
         return cell
     }
+}
+
+func extractAlbumArtwork(from audioURL: URL) async -> UIImage? {
+    let asset = AVURLAsset(url: audioURL)
+    do {
+        guard let format = try await asset.load(.availableMetadataFormats).first else {
+            return nil
+        }
+        let metadata = try await asset.loadMetadata(for: format)
+        for item in metadata {
+            if let data = try await item.load(.dataValue),
+               item.commonKey?.rawValue == "artwork",
+               let image = UIImage(data: data) {
+                return image
+            }
+        }
+    } catch {
+        print(error.localizedDescription)
+    }
+    return nil
 }
