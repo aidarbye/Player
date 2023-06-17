@@ -9,6 +9,7 @@ class PlayerViewController: UIViewController {
         let PlayPauseButton = UIButton(type: .system)
         let NextMusicButton = UIButton(type: .system)
         let PrevMusicButton = UIButton(type: .system)
+        let Repeat = UIButton(type: .system)
         let Slider = UISlider()
         imageView.image = UIImage(systemName: "rectangle.on.rectangle.square")
         view.addSubview(imageView)
@@ -16,6 +17,7 @@ class PlayerViewController: UIViewController {
         view.addSubview(NextMusicButton)
         view.addSubview(PrevMusicButton)
         view.addSubview(Slider)
+        view.addSubview(Repeat)
         
         imageView.snp.makeConstraints { make in
             make.width.height.equalTo(400)
@@ -35,6 +37,9 @@ class PlayerViewController: UIViewController {
         NextMusicButton.setImage(UIImage(systemName: "arrowtriangle.right"), for: .normal)
         NextMusicButton.addTarget(self, action: #selector(NextMusicPlay), for: .touchUpInside)
         
+        Repeat.setImage(UIImage(systemName: "repeat"), for: .normal)
+        Repeat.addTarget(self, action: #selector(repeatAction), for: .touchUpInside)
+        
         PrevMusicButton.setImage(UIImage(systemName: "arrowtriangle.backward"), for: .normal)
         PrevMusicButton.addTarget(self, action: #selector(PrevMusicPlay), for: .touchUpInside)
         
@@ -52,6 +57,13 @@ class PlayerViewController: UIViewController {
             make.centerY.equalTo(PlayPauseButton.snp.centerY)
             make.centerX.equalTo(PlayPauseButton.snp.centerX).offset(-50)
         }
+        Repeat.snp.makeConstraints { make in
+            make.centerY.equalTo(PlayPauseButton.snp.centerY)
+            make.centerX.equalTo(PrevMusicButton.snp.centerX).offset(-50)
+        }
+    }
+    @objc func repeatAction() {
+        print(#function)
     }
     @objc func playStop() {
         print(123)

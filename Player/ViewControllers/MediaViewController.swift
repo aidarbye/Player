@@ -3,14 +3,15 @@ import SnapKit
 import MobileCoreServices
 import UniformTypeIdentifiers
 import AVFoundation
-import CoreData
 
 class MediaViewController: UIViewController, UIDocumentPickerDelegate {
     let tableView = UITableView()
-    // Change there (input coreData)
-    private var audioFiles: [AudioFile] = []
+    var audioFiles: [Audio] = []
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupView()
+    }
+    func setupView() {
         view.backgroundColor = .white
         title = "Music"
         navigationController?.navigationBar.prefersLargeTitles = true
@@ -28,18 +29,6 @@ class MediaViewController: UIViewController, UIDocumentPickerDelegate {
             make.edges.equalToSuperview()
         }
     }
-    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
-        let selectedUrl = urls[0]
-        let fileName = selectedUrl.lastPathComponent
-        let filePath = selectedUrl.path(percentEncoded: true)
-        let AudioFile = AudioFile(filePath: filePath, fileName: fileName)
-        let insertIndex = audioFiles.count
-        audioFiles.insert(AudioFile, at: insertIndex)
-        tableView.insertRows(at: [IndexPath(row: insertIndex, section: 0)], with: .automatic)
-    }
-    func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
-        print("canceled")
-    }
     @objc private func add() {
         let supportedTypes: [UTType] = [UTType.audio]
         let pickerViewController = UIDocumentPickerViewController(forOpeningContentTypes: supportedTypes, asCopy: true)
@@ -49,6 +38,22 @@ class MediaViewController: UIViewController, UIDocumentPickerDelegate {
         self.present(pickerViewController, animated: true, completion: nil)
     }
 }
+// MARK: DocumentPicker
+extension MediaViewController {
+    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+        let selectedUrl = urls[0]
+        let fileName = selectedUrl.lastPathComponent
+        let filePath = selectedUrl.path(percentEncoded: true)
+        let AudioFile = Audio(filePath: filePath, fileName: fileName)
+        let insertIndex = audioFiles.count
+        audioFiles.insert(AudioFile, at: insertIndex)
+        tableView.insertRows(at: [IndexPath(row: insertIndex, section: 0)], with: .automatic)
+    }
+    func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
+        print("canceled")
+    }
+}
+// MARK: TableViewDelegate
 extension MediaViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         audioFiles.count
@@ -59,6 +64,8 @@ extension MediaViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         AudioPlayer.shared.playAudio(fileURL: URL(string: audioFiles[indexPath.row].filePath)!)
+        audioFiles[indexPath.row].isPlaying.toggle()
+        tableView.reloadRows(at: [indexPath], with: .automatic)
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = MusicTableViewCell(style: .default, reuseIdentifier: "MusicCell")
@@ -72,6 +79,12 @@ extension MediaViewController: UITableViewDelegate, UITableViewDataSource {
             }
         }
         return cell
+    }
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if audioFiles[indexPath.row].isPlaying {
+            cell.layer.borderWidth = 2
+            cell.layer.borderColor = UIColor.green.cgColor
+        }
     }
 }
 
@@ -91,6 +104,7 @@ func extractAlbumArtwork(from audioURL: URL) async -> UIImage? {
         }
     } catch {
         print(error.localizedDescription)
+        print(#function)
     }
     return nil
 }

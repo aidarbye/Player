@@ -1,7 +1,8 @@
 import Foundation
 import CoreData
 
-final class Audio: NSManagedObject {
-    @NSManaged var filePath: String
-    @NSManaged var fileName: String
+struct Audio {
+    var filePath: String
+    var fileName: String
+    var isPlaying = false
 }

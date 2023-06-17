@@ -14,6 +14,10 @@ class AudioPlayer {
             audioPlayer?.play()
         } catch {
             print("Ошибка при воспроизведении аудио: \(error.localizedDescription)")
+            print(#function)
         }
+    }
+    func pause() {
+        audioPlayer?.pause()
     }
 }

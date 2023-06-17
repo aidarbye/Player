@@ -18,8 +18,6 @@
 		B490B7882A325EE0004F6F15 /* Audio.swift in Sources */ = {isa = PBXBuildFile; fileRef = B490B7872A325EE0004F6F15 /* Audio.swift */; };
 		B490B78A2A325EFF004F6F15 /* AudioPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B490B7892A325EFF004F6F15 /* AudioPlayer.swift */; };
 		B490B78C2A3268B2004F6F15 /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B490B78B2A3268B2004F6F15 /* SearchViewController.swift */; };
-		B490B7932A33BE9E004F6F15 /* AudioFile.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = B490B7912A33BE9D004F6F15 /* AudioFile.xcdatamodeld */; };
-		B490B7952A33BF12004F6F15 /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B490B7942A33BF12004F6F15 /* StorageManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,8 +33,6 @@
 		B490B7872A325EE0004F6F15 /* Audio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Audio.swift; sourceTree = "<group>"; };
 		B490B7892A325EFF004F6F15 /* AudioPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayer.swift; sourceTree = "<group>"; };
 		B490B78B2A3268B2004F6F15 /* SearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
-		B490B7922A33BE9E004F6F15 /* AudioFile.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = AudioFile.xcdatamodel; sourceTree = "<group>"; };
-		B490B7942A33BF12004F6F15 /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,8 +75,6 @@
 				B4402C0B2A31BEB500B1CC46 /* Assets.xcassets */,
 				B4402C102A31BEB500B1CC46 /* Info.plist */,
 				B4402C0D2A31BEB500B1CC46 /* LaunchScreen.storyboard */,
-				B490B7912A33BE9D004F6F15 /* AudioFile.xcdatamodeld */,
-				B490B7942A33BF12004F6F15 /* StorageManager.swift */,
 			);
 			path = Player;
 			sourceTree = "<group>";
@@ -202,8 +196,6 @@
 				B490B7842A31C3CD004F6F15 /* PlayerViewController.swift in Sources */,
 				B4402C032A31BEB300B1CC46 /* AppDelegate.swift in Sources */,
 				B4402C052A31BEB300B1CC46 /* SceneDelegate.swift in Sources */,
-				B490B7952A33BF12004F6F15 /* StorageManager.swift in Sources */,
-				B490B7932A33BE9E004F6F15 /* AudioFile.xcdatamodeld in Sources */,
 				B490B78A2A325EFF004F6F15 /* AudioPlayer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -431,19 +423,6 @@
 			productName = SnapKit;
 		};
 /* End XCSwiftPackageProductDependency section */
-
-/* Begin XCVersionGroup section */
-		B490B7912A33BE9D004F6F15 /* AudioFile.xcdatamodeld */ = {
-			isa = XCVersionGroup;
-			children = (
-				B490B7922A33BE9E004F6F15 /* AudioFile.xcdatamodel */,
-			);
-			currentVersion = B490B7922A33BE9E004F6F15 /* AudioFile.xcdatamodel */;
-			path = AudioFile.xcdatamodeld;
-			sourceTree = "<group>";
-			versionGroupType = wrapper.xcdatamodel;
-		};
-/* End XCVersionGroup section */
 	};
 	rootObject = B4402BF72A31BEB300B1CC46 /* Project object */;
 }
