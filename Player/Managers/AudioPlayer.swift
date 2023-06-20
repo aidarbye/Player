@@ -4,6 +4,7 @@ import AVFoundation
 class AudioPlayer {
     static let shared = AudioPlayer()
     var audioPlayer: AVAudioPlayer?
+    var currentSong: Audio?
     func playAudio(fileURL: URL) {
         do {
             try AVAudioSession.sharedInstance().setCategory(.playback)

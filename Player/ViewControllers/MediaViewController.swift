@@ -8,6 +8,7 @@ class MediaViewController: UIViewController, UIDocumentPickerDelegate {
     var audioFiles: [Audio] = []
     
     override func viewDidLoad() {
+        print("init MediaVC")
         super.viewDidLoad()
         setupView()
     }
@@ -48,6 +49,11 @@ extension MediaViewController: UITableViewDelegate, UITableViewDataSource {
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        
+        AudioPlayer.shared.playAudio(fileURL: URL(string: audioFiles[indexPath.row].filePath)!)
+        AudioPlayer.shared.currentSong = audioFiles[indexPath.row]
+        AudioPlayer.shared.currentSong?.isPlaying.toggle()
+        
         tableView.reloadRows(at: [indexPath], with: .automatic)
         
     }

@@ -2,25 +2,50 @@ import UIKit
 import SnapKit
 
 class PlayerViewController: UIViewController {
+    var currentAudio: Audio?
     let imageView = UIImageView()
+    var slider = UISlider()
+    let shared = AudioPlayer.shared
     
     override func viewDidLoad() {
         print("init PlayerVC")
         super.viewDidLoad()
         setupView()
-        
+        if shared.audioPlayer != nil {
+            slider.maximumValue = Float(shared.audioPlayer!.duration)
+        }
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        if shared.audioPlayer != nil {
+            slider.maximumValue = Float(shared.audioPlayer!.duration)
+        }
     }
     @objc func repeatAction() {
         print(#function)
     }
     @objc func playStop() {
         print(#function)
+        if AudioPlayer.shared.currentSong != nil {
+            if AudioPlayer.shared.currentSong!.isPlaying {
+                AudioPlayer.shared.pause()
+            } else {
+                AudioPlayer.shared.resume()
+            }
+            AudioPlayer.shared.currentSong!.isPlaying.toggle()
+        }
     }
     @objc func NextMusicPlay() {
         print(#function)
     }
     @objc func PrevMusicPlay() {
         print(#function)
+    }
+    @objc func scrubAudio() {
+        print(#function)
+        shared.audioPlayer?.stop()
+        shared.audioPlayer?.currentTime = TimeInterval(slider.value)
+        shared.audioPlayer?.prepareToPlay()
+        shared.audioPlayer?.play()
     }
 }
 
@@ -31,22 +56,20 @@ extension PlayerViewController {
         let NextMusicButton = UIButton(type: .system)
         let PrevMusicButton = UIButton(type: .system)
         let Repeat = UIButton(type: .system)
-        let Slider = UISlider()
         imageView.image = UIImage(systemName: "rectangle.on.rectangle.square")
         view.addSubview(imageView)
         view.addSubview(PlayPauseButton)
         view.addSubview(NextMusicButton)
         view.addSubview(PrevMusicButton)
-        view.addSubview(Slider)
+        view.addSubview(slider)
         view.addSubview(Repeat)
-        
         imageView.snp.makeConstraints { make in
             make.width.height.equalTo(400)
             make.centerY.equalToSuperview().offset(-30)
             make.centerX.equalToSuperview()
         }
         
-        Slider.snp.makeConstraints { make in
+        slider.snp.makeConstraints { make in
             make.width.equalToSuperview().offset(-30)
             make.centerX.equalToSuperview()
             make.top.equalTo(imageView.snp.bottom).offset(40)
@@ -64,9 +87,11 @@ extension PlayerViewController {
         PrevMusicButton.setImage(UIImage(systemName: "arrowtriangle.backward"), for: .normal)
         PrevMusicButton.addTarget(self, action: #selector(PrevMusicPlay), for: .touchUpInside)
         
+        slider.addTarget(self, action: #selector(scrubAudio), for: .touchUpInside)
+        
         PlayPauseButton.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.top.equalTo(Slider.snp.bottom).offset(20)
+            make.top.equalTo(slider.snp.bottom).offset(20)
         }
         
         NextMusicButton.snp.makeConstraints { make in
