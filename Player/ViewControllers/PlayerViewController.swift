@@ -3,8 +3,29 @@ import SnapKit
 
 class PlayerViewController: UIViewController {
     let imageView = UIImageView()
+    
     override func viewDidLoad() {
+        print("init PlayerVC")
         super.viewDidLoad()
+        setupView()
+        
+    }
+    @objc func repeatAction() {
+        print(#function)
+    }
+    @objc func playStop() {
+        print(#function)
+    }
+    @objc func NextMusicPlay() {
+        print(#function)
+    }
+    @objc func PrevMusicPlay() {
+        print(#function)
+    }
+}
+
+extension PlayerViewController {
+    private func setupView() {
         view.backgroundColor = .white
         let PlayPauseButton = UIButton(type: .system)
         let NextMusicButton = UIButton(type: .system)
@@ -61,17 +82,5 @@ class PlayerViewController: UIViewController {
             make.centerY.equalTo(PlayPauseButton.snp.centerY)
             make.centerX.equalTo(PrevMusicButton.snp.centerX).offset(-50)
         }
-    }
-    @objc func repeatAction() {
-        print(#function)
-    }
-    @objc func playStop() {
-        print(123)
-    }
-    @objc func NextMusicPlay() {
-        print(123)
-    }
-    @objc func PrevMusicPlay() {
-        print(123)
     }
 }

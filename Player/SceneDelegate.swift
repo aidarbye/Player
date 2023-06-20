@@ -4,7 +4,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
 
-
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: windowScene)
@@ -14,8 +13,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func setupView() {
         let mainViewController = UINavigationController(rootViewController: MediaViewController())
         mainViewController.tabBarItem = UITabBarItem(title: "Media",
-                                                     image: UIImage(systemName: "music.note.list"),
-                                                     tag: 0)
+                                                       image: UIImage(systemName: "music.note.list"),
+                                                       tag: 0)
         let playerViewController = UINavigationController(rootViewController: PlayerViewController())
         playerViewController.tabBarItem = UITabBarItem(title: "Player",
                                                        image: UIImage(systemName: "play"),
