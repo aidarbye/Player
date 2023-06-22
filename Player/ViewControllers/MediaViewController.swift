@@ -1,6 +1,7 @@
 import UIKit
 import SnapKit
 import UniformTypeIdentifiers
+import AVKit
 
 class MediaViewController: UIViewController, UIDocumentPickerDelegate {
     
@@ -49,13 +50,8 @@ extension MediaViewController: UITableViewDelegate, UITableViewDataSource {
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        
         AudioPlayer.shared.playAudio(fileURL: URL(string: audioFiles[indexPath.row].filePath)!)
         AudioPlayer.shared.currentSong = audioFiles[indexPath.row]
-        AudioPlayer.shared.currentSong?.isPlaying.toggle()
-        
-        tableView.reloadRows(at: [indexPath], with: .automatic)
-        
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = MusicTableViewCell(style: .default, reuseIdentifier: "MusicCell")
@@ -70,8 +66,8 @@ extension MediaViewController {
         let selectedUrl = urls[0]
         let fileName = selectedUrl.lastPathComponent
         let filePath = selectedUrl.path(percentEncoded: true)
-        let AudioFile = Audio(filePath: filePath, fileName: fileName)
         let insertIndex = audioFiles.count
+        let AudioFile = Audio(filePath: filePath, fileName: fileName)
         audioFiles.insert(AudioFile, at: insertIndex)
         tableView.insertRows(at: [IndexPath(row: insertIndex, section: 0)], with: .automatic)
     }
@@ -97,6 +93,37 @@ func extractAlbumArtwork(from audioURL: URL) async -> UIImage? {
         print(#function)
     }
     return nil
+}
+ 
+func getData(selectedUrl: URL) async -> UIImage? {
+ let asset = AVAsset(url: selectedUrl)
+ do {
+     let duration = try await asset.load(.duration)
+     let metadata = try await asset.load(.commonMetadata)
+     
+     for metadataItem in metadata {
+         if let key = metadataItem.commonKey?.rawValue,
+            let value = try await metadataItem.load(.value) {
+             print("Key: \(key), Value: \(value)")
+         }
+     }
+     
+     for i in metadata {
+         if i.commonKey?.rawValue == "artwork" {
+             let data = try await i.load(.value) as! Data
+             print("this is -> \(data)")
+             return UIImage(data: data)
+         }
+         if i.commonKey?.rawValue == "title"{
+             let title = try await i.load(.value) as! String
+             print("this is -> \(title)")
+         }
+     }
+     print(duration)
+ } catch {
+     print(error.localizedDescription)
+ }
+ return nil
 }
 */
 

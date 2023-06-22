@@ -2,7 +2,6 @@ import UIKit
 import SnapKit
 
 class PlayerViewController: UIViewController {
-    var currentAudio: Audio?
     let imageView = UIImageView()
     var slider = UISlider()
     let shared = AudioPlayer.shared
@@ -11,13 +10,21 @@ class PlayerViewController: UIViewController {
         print("init PlayerVC")
         super.viewDidLoad()
         setupView()
-        if shared.audioPlayer != nil {
-            slider.maximumValue = Float(shared.audioPlayer!.duration)
-        }
     }
     override func viewWillAppear(_ animated: Bool) {
-        if shared.audioPlayer != nil {
-            slider.maximumValue = Float(shared.audioPlayer!.duration)
+        if let duration = shared.audioPlayer?.duration {
+            slider.maximumValue = Float(duration)
+        }
+        if let value = self.shared.audioPlayer?.currentTime {
+            self.slider.value = Float(value)
+        }
+        Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { (_) in
+            if self.shared.isPlaying {
+                if let value = self.shared.audioPlayer?.currentTime {
+                    self.slider.value = Float(value)
+                    print(self.slider.value)
+                }
+            }
         }
     }
     @objc func repeatAction() {
@@ -26,12 +33,12 @@ class PlayerViewController: UIViewController {
     @objc func playStop() {
         print(#function)
         if AudioPlayer.shared.currentSong != nil {
-            if AudioPlayer.shared.currentSong!.isPlaying {
+            if AudioPlayer.shared.isPlaying {
                 AudioPlayer.shared.pause()
             } else {
                 AudioPlayer.shared.resume()
             }
-            AudioPlayer.shared.currentSong!.isPlaying.toggle()
+            AudioPlayer.shared.isPlaying.toggle()
         }
     }
     @objc func NextMusicPlay() {
@@ -42,12 +49,17 @@ class PlayerViewController: UIViewController {
     }
     @objc func scrubAudio() {
         print(#function)
-        shared.audioPlayer?.stop()
         shared.audioPlayer?.currentTime = TimeInterval(slider.value)
         shared.audioPlayer?.prepareToPlay()
         shared.audioPlayer?.play()
     }
+    @objc func sliderValueChanged(_ sender: UISlider) {
+        print(#function)
+        shared.audioPlayer?.stop()
+        print(sender.value)
+    }
 }
+
 
 extension PlayerViewController {
     private func setupView() {
@@ -87,6 +99,7 @@ extension PlayerViewController {
         PrevMusicButton.setImage(UIImage(systemName: "arrowtriangle.backward"), for: .normal)
         PrevMusicButton.addTarget(self, action: #selector(PrevMusicPlay), for: .touchUpInside)
         
+        slider.addTarget(self, action: #selector(sliderValueChanged(_:)), for: .valueChanged)
         slider.addTarget(self, action: #selector(scrubAudio), for: .touchUpInside)
         
         PlayPauseButton.snp.makeConstraints { make in
