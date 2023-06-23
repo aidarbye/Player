@@ -4,5 +4,8 @@ import UIKit
 
 struct Audio {
     var filePath: String
-    var fileName: String
+    var title: String
+    var artist: String
+    var image: UIImage
+    var duration: Float
 }

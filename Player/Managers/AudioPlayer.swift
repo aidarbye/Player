@@ -2,27 +2,27 @@ import Foundation
 import AVFoundation
 import UIKit
 
-class AudioPlayer {
+class AudioPlayer: NSObject, AVAudioPlayerDelegate{
     static let shared = AudioPlayer()
-    var delegate = AVdelegate()
     var audioPlayer: AVAudioPlayer?
     var currentSong: Audio?
+    var delegate: PlayerViewControllerDelegate?
+    var currentIndex: Int = 0
     var isPlaying: Bool = false
-    init() {
-        self.audioPlayer?.delegate = self.delegate
+    var songs: [Audio] = []
+    
+    override init() {
+        super.init()
         audioPlayer?.prepareToPlay()
-        NotificationCenter.default.addObserver(forName: NSNotification.Name("Finish"), object: nil, queue: .main) { (_) in
-            self.isPlaying = false
-        }
         print("initializain of \(self)")
     }
-    
     func playAudio(fileURL: URL) {
         do {
             isPlaying = true
             try AVAudioSession.sharedInstance().setCategory(.playback)
             try AVAudioSession.sharedInstance().setActive(true)
             audioPlayer = try AVAudioPlayer(contentsOf: fileURL)
+            audioPlayer?.delegate = self
             audioPlayer?.play()
         } catch {
             print("Ошибка при воспроизведении аудио: \(error.localizedDescription)")
@@ -34,9 +34,26 @@ class AudioPlayer {
     func resume() {
         audioPlayer?.play()
     }
-}
-class AVdelegate : NSObject,AVAudioPlayerDelegate{
     func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
-        NotificationCenter.default.post(name: NSNotification.Name("Finish"), object: nil)
+        playNextSong()
+    }
+    
+    func playNextSong() {
+        if AudioPlayer.shared.currentIndex == AudioPlayer.shared.songs.count - 1 {
+            AudioPlayer.shared.currentIndex = 0
+        } else {
+            AudioPlayer.shared.currentIndex += 1
+        }
+            AudioPlayer.shared.playAudio(fileURL:URL(string:AudioPlayer.shared.songs[AudioPlayer.shared.currentIndex].filePath)!)
+        delegate?.changeSong(song: AudioPlayer.shared.songs[AudioPlayer.shared.currentIndex])
+    }
+    func playPrevSong() {
+        if AudioPlayer.shared.currentIndex == 0 {
+            AudioPlayer.shared.currentIndex = AudioPlayer.shared.songs.count - 1
+        } else {
+            AudioPlayer.shared.currentIndex -= 1
+        }
+            AudioPlayer.shared.playAudio(fileURL:URL(string:AudioPlayer.shared.songs[AudioPlayer.shared.currentIndex].filePath)!)
+        delegate?.changeSong(song: AudioPlayer.shared.songs[AudioPlayer.shared.currentIndex])
     }
 }

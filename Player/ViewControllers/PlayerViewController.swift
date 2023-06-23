@@ -1,31 +1,44 @@
 import UIKit
 import SnapKit
 
-class PlayerViewController: UIViewController {
+protocol PlayerViewControllerDelegate {
+    func changeSong(song: Audio)
+}
+
+class PlayerViewController: UIViewController, PlayerViewControllerDelegate {
     let imageView = UIImageView()
     var slider = UISlider()
     let shared = AudioPlayer.shared
+    var timer: Timer?
     
     override func viewDidLoad() {
+        AudioPlayer.shared.delegate = self
         print("init PlayerVC")
         super.viewDidLoad()
         setupView()
-    }
-    override func viewWillAppear(_ animated: Bool) {
         if let duration = shared.audioPlayer?.duration {
             slider.maximumValue = Float(duration)
         }
+        imageView.image = shared.songs[shared.currentIndex].image
+    }
+    override func viewWillAppear(_ animated: Bool) {
         if let value = self.shared.audioPlayer?.currentTime {
             self.slider.value = Float(value)
         }
-        Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { (_) in
-            if self.shared.isPlaying {
-                if let value = self.shared.audioPlayer?.currentTime {
-                    self.slider.value = Float(value)
-                    print(self.slider.value)
+        if timer == nil {
+            timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { (_) in
+                if self.shared.isPlaying {
+                    if let value = self.shared.audioPlayer?.currentTime {
+                        self.slider.value = Float(value)
+                        print(self.slider.value)
+                    }
                 }
             }
         }
+    }
+    override func viewWillDisappear(_ animated: Bool) {
+        timer?.invalidate()
+        timer = nil
     }
     @objc func repeatAction() {
         print(#function)
@@ -43,9 +56,17 @@ class PlayerViewController: UIViewController {
     }
     @objc func NextMusicPlay() {
         print(#function)
+        if AudioPlayer.shared.songs.isEmpty {
+            return
+        }
+        AudioPlayer.shared.playNextSong()
     }
     @objc func PrevMusicPlay() {
         print(#function)
+        if AudioPlayer.shared.songs.isEmpty {
+            return
+        }
+        AudioPlayer.shared.playPrevSong()
     }
     @objc func scrubAudio() {
         print(#function)
@@ -57,6 +78,10 @@ class PlayerViewController: UIViewController {
         print(#function)
         shared.audioPlayer?.stop()
         print(sender.value)
+    }
+    func changeSong(song: Audio) {
+        self.imageView.image = song.image
+        self.slider.maximumValue = song.duration
     }
 }
 
