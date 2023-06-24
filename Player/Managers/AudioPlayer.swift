@@ -5,8 +5,8 @@ import UIKit
 class AudioPlayer: NSObject, AVAudioPlayerDelegate{
     static let shared = AudioPlayer()
     var audioPlayer: AVAudioPlayer?
-    var currentSong: Audio?
     var delegate: PlayerViewControllerDelegate?
+    var currentSong: Audio?
     var currentIndex: Int = 0
     var isPlaying: Bool = false
     var songs: [Audio] = []
@@ -37,7 +37,6 @@ class AudioPlayer: NSObject, AVAudioPlayerDelegate{
     func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
         playNextSong()
     }
-    
     func playNextSong() {
         if AudioPlayer.shared.currentIndex == AudioPlayer.shared.songs.count - 1 {
             AudioPlayer.shared.currentIndex = 0

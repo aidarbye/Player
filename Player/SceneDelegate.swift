@@ -19,15 +19,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         playerViewController.tabBarItem = UITabBarItem(title: "Player",
                                                        image: UIImage(systemName: "play"),
                                                        tag: 1)
-        let searchViewController = UINavigationController(rootViewController: SearchViewController())
-        searchViewController.tabBarItem = UITabBarItem(title: "Search",
-                                                       image: UIImage(systemName: "magnifyingglass"),
-                                                       tag: 2)
         let tabBarController = UITabBarController()
-        tabBarController.tabBar.backgroundColor = .gray
-        tabBarController.tabBar.tintColor = .green
-        tabBarController.tabBar.unselectedItemTintColor = .red
-        tabBarController.viewControllers = [mainViewController, playerViewController, searchViewController]
+        tabBarController.tabBar.backgroundColor = UIColor(red: 228/255, green: 228/255, blue: 228/255, alpha: 1)
+        tabBarController.tabBar.tintColor = .black
+        tabBarController.viewControllers = [mainViewController, playerViewController]
         window?.rootViewController = tabBarController
         window?.makeKeyAndVisible()
     }

@@ -17,7 +17,6 @@
 		B490B7862A31DEBF004F6F15 /* MusicTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B490B7852A31DEBF004F6F15 /* MusicTableViewCell.swift */; };
 		B490B7882A325EE0004F6F15 /* Audio.swift in Sources */ = {isa = PBXBuildFile; fileRef = B490B7872A325EE0004F6F15 /* Audio.swift */; };
 		B490B78A2A325EFF004F6F15 /* AudioPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B490B7892A325EFF004F6F15 /* AudioPlayer.swift */; };
-		B490B78C2A3268B2004F6F15 /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B490B78B2A3268B2004F6F15 /* SearchViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,7 +31,6 @@
 		B490B7852A31DEBF004F6F15 /* MusicTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicTableViewCell.swift; sourceTree = "<group>"; };
 		B490B7872A325EE0004F6F15 /* Audio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Audio.swift; sourceTree = "<group>"; };
 		B490B7892A325EFF004F6F15 /* AudioPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayer.swift; sourceTree = "<group>"; };
-		B490B78B2A3268B2004F6F15 /* SearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -108,7 +106,6 @@
 			children = (
 				B4402C062A31BEB300B1CC46 /* MediaViewController.swift */,
 				B490B7832A31C3CD004F6F15 /* PlayerViewController.swift */,
-				B490B78B2A3268B2004F6F15 /* SearchViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -191,7 +188,6 @@
 			files = (
 				B490B7882A325EE0004F6F15 /* Audio.swift in Sources */,
 				B490B7862A31DEBF004F6F15 /* MusicTableViewCell.swift in Sources */,
-				B490B78C2A3268B2004F6F15 /* SearchViewController.swift in Sources */,
 				B4402C072A31BEB300B1CC46 /* MediaViewController.swift in Sources */,
 				B490B7842A31C3CD004F6F15 /* PlayerViewController.swift in Sources */,
 				B4402C032A31BEB300B1CC46 /* AppDelegate.swift in Sources */,
