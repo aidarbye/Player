@@ -32,7 +32,7 @@ class MediaViewController: UIViewController, UIDocumentPickerDelegate, UITextFie
         button.tintColor = .black
         let clearButton = UIButton(type: .custom)
         clearButton.setImage(UIImage(systemName: "x.circle"), for: .normal)
-        clearButton.addTarget(self.textField, action: #selector(clearSearchText), for: .touchUpInside)
+        clearButton.addTarget(self, action: #selector(clearSearchText), for: .touchUpInside)
         clearButton.tintColor = .black
         title = "Library"
         view.backgroundColor = .white
@@ -75,13 +75,13 @@ extension MediaViewController: UITableViewDelegate, UITableViewDataSource {
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        
-            let url = AudioPlayer.shared.songs[indexPath.row].filePath
-            AudioPlayer.shared.playAudio(fileURL: URL(string: url)!)
-            AudioPlayer.shared.currentIndex = indexPath.row
-            AudioPlayer.shared.currentSong = AudioPlayer.shared.songs[indexPath.row]
-            AudioPlayer.shared.delegate?.changeSong(song: AudioPlayer.shared.songs[indexPath.row])
-        
+        let url = AudioPlayer.shared.songs[indexPath.row].filePath
+        AudioPlayer.shared.audioPlayer = nil
+        AudioPlayer.shared.playAudio(fileURL: URL(string: url)!)
+        AudioPlayer.shared.currentIndex = indexPath.row
+        AudioPlayer.shared.currentSong = AudioPlayer.shared.songs[indexPath.row]
+        AudioPlayer.shared.delegate?.changeSong(
+            song: AudioPlayer.shared.songs[indexPath.row])
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = MusicTableViewCell(style: .default, reuseIdentifier: "MusicCell")

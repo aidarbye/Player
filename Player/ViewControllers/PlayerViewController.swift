@@ -67,6 +67,7 @@ class PlayerViewController: UIViewController, PlayerViewControllerDelegate {
     @objc func scrubAudio() {
         print(#function)
         if let audioPlayer = shared.audioPlayer {
+            shared.isPlaying = true
             audioPlayer.currentTime = TimeInterval(slider.value)
             audioPlayer.prepareToPlay()
             audioPlayer.play()
@@ -74,11 +75,13 @@ class PlayerViewController: UIViewController, PlayerViewControllerDelegate {
     }
     @objc func sliderValueChanged(_ sender: UISlider) {
         if let audioPlayer = shared.audioPlayer {
+            shared.isPlaying = false
             audioPlayer.stop()
             print(sender.value)
         }
     }
     func changeSong(song: Audio) {
+        AudioPlayer.shared.currentSong = song
         self.imageView.image = song.image
         self.slider.maximumValue = song.duration
     }

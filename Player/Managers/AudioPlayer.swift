@@ -13,7 +13,6 @@ class AudioPlayer: NSObject, AVAudioPlayerDelegate{
     
     override init() {
         super.init()
-        audioPlayer?.prepareToPlay()
         print("initializain of \(self)")
     }
     func playAudio(fileURL: URL) {
@@ -23,6 +22,7 @@ class AudioPlayer: NSObject, AVAudioPlayerDelegate{
             try AVAudioSession.sharedInstance().setActive(true)
             audioPlayer = try AVAudioPlayer(contentsOf: fileURL)
             audioPlayer?.delegate = self
+            audioPlayer?.prepareToPlay()
             audioPlayer?.play()
         } catch {
             print("Ошибка при воспроизведении аудио: \(error.localizedDescription)")
