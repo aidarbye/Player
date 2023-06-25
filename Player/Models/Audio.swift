@@ -2,10 +2,14 @@ import Foundation
 import CoreData
 import UIKit
 
-struct Audio {
-    var filePath: String
+struct Audio: Codable {
+    var fileName: String
     var title: String
     var artist: String
-    var image: UIImage
     var duration: Float
+    var imageData: Data
+    
+    var image: UIImage? {
+        return UIImage(data: imageData)
+    }
 }

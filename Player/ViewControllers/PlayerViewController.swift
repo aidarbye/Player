@@ -7,7 +7,8 @@ protocol PlayerViewControllerDelegate {
 
 class PlayerViewController: UIViewController, PlayerViewControllerDelegate {
     let imageView = UIImageView()
-    var slider = UISlider()
+    let slider = UISlider()
+    let label = UILabel()
     let shared = AudioPlayer.shared
     var timer: Timer?
     
@@ -15,6 +16,11 @@ class PlayerViewController: UIViewController, PlayerViewControllerDelegate {
         AudioPlayer.shared.delegate = self
         super.viewDidLoad()
         setupView()
+        if AudioPlayer.shared.isPlaying {
+            self.imageView.image = AudioPlayer.shared.currentSong?.image
+            self.slider.maximumValue = AudioPlayer.shared.currentSong!.duration
+            self.label.text = AudioPlayer.shared.currentSong?.title
+        }
     }
     override func viewWillAppear(_ animated: Bool) {
         if let value = self.shared.audioPlayer?.currentTime {
@@ -81,9 +87,9 @@ class PlayerViewController: UIViewController, PlayerViewControllerDelegate {
         }
     }
     func changeSong(song: Audio) {
-        AudioPlayer.shared.currentSong = song
         self.imageView.image = song.image
         self.slider.maximumValue = song.duration
+        self.label.text = song.title
     }
 }
 
@@ -97,22 +103,31 @@ extension PlayerViewController {
         let Repeat = UIButton(type: .system)
         imageView.image = UIImage(systemName: "rectangle.fill")
         imageView.tintColor = .black
+        label.text = "Nothing there buddy"
+        label.font = .boldSystemFont(ofSize: 20)
+        slider.tintColor = .black
+        slider.thumbTintColor = .black
         view.addSubview(imageView)
         view.addSubview(PlayPauseButton)
         view.addSubview(NextMusicButton)
         view.addSubview(PrevMusicButton)
         view.addSubview(slider)
         view.addSubview(Repeat)
+        view.addSubview(label)
         imageView.snp.makeConstraints { make in
             make.height.equalTo(350)
             make.width.equalToSuperview().offset(10)
             make.centerY.equalToSuperview().offset(-30)
             make.centerX.equalToSuperview()
         }
+        label.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.top.equalTo(imageView.snp.bottom).offset(30)
+        }
         slider.snp.makeConstraints { make in
             make.width.equalToSuperview().offset(-30)
             make.centerX.equalToSuperview()
-            make.top.equalTo(imageView.snp.bottom).offset(30)
+            make.top.equalTo(label.snp.bottom).offset(30)
         }
         
         PlayPauseButton.setImage(UIImage(systemName: "playpause"), for: .normal)

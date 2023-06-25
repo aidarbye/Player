@@ -75,9 +75,7 @@ extension MediaViewController: UITableViewDelegate, UITableViewDataSource {
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let url = AudioPlayer.shared.songs[indexPath.row].filePath
-        AudioPlayer.shared.audioPlayer = nil
-        AudioPlayer.shared.playAudio(fileURL: URL(string: url)!)
+        AudioPlayer.shared.playAudio(fileName: AudioPlayer.shared.songs[indexPath.row].fileName)
         AudioPlayer.shared.currentIndex = indexPath.row
         AudioPlayer.shared.currentSong = AudioPlayer.shared.songs[indexPath.row]
         AudioPlayer.shared.delegate?.changeSong(
@@ -93,17 +91,31 @@ extension MediaViewController: UITableViewDelegate, UITableViewDataSource {
 // MARK: DocumentPicker
 extension MediaViewController {
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+        let fileManager = FileManager.default
+        let documentsDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
         for url in urls {
-            let selectedUrl = url
+            let fileName = url.lastPathComponent
+            let destinationURL = documentsDirectory.appendingPathComponent(fileName)
+            do {
+                try fileManager.moveItem(at: url, to: destinationURL)
+                print("Файл успешно перемещен в директорию документов")
+                if fileManager.fileExists(atPath: destinationURL.path) {
+                    print("Файл существует в директории документов")
+                } else {
+                    print("Файл не существует в директории документов")
+                }
+            } catch {
+                print("Ошибка перемещения файла: \(error.localizedDescription)")
+            }
             Task {
                 //MARK: Temporary
-                if let metadata = await getMetadataFromURL(selectedUrl: selectedUrl) {
-                    let image = await getImageFromMetadata(metadata: metadata)
+                if let metadata = await getMetadataFromURL(selectedUrl: url) {
+                    let imageData = await getImageFromMetadata(metadata: metadata)
                     let artist = await getArtistFromMetadata(metadata: metadata)
                     let title = await getTitleFromMetadata(metadata: metadata)
-                    let duration = await getDurationFromUrl(selectedUrl: selectedUrl)
-                    let filePath = selectedUrl.path(percentEncoded: true)
-                    let AudioFile = Audio(filePath: filePath,title: title,artist: artist,image: image,duration: duration)
+                    let duration = await getDurationFromUrl(selectedUrl: url)
+                    let fileName = url.absoluteURL.lastPathComponent
+                    let AudioFile = Audio(fileName: fileName,title: title,artist: artist, duration: duration, imageData: imageData)
                     AudioPlayer.shared.songs.insert(AudioFile, at: AudioPlayer.shared.songs.count)
                     tableView.insertRows(at: [IndexPath(row: AudioPlayer.shared.songs.count - 1, section: 0)], with: .automatic)
                 }
@@ -120,20 +132,18 @@ func getMetadataFromURL(selectedUrl: URL) async -> [AVMetadataItem]? {
     }
     return nil
 }
-func getImageFromMetadata(metadata: [AVMetadataItem]) async -> UIImage {
+func getImageFromMetadata(metadata: [AVMetadataItem]) async -> Data {
     do {
         for metadataItem in metadata {
             if metadataItem.commonKey?.rawValue == "artwork" {
                 let data = try await metadataItem.load(.value) as! Data
-                if let image = UIImage(data: data) {
-                    return image
-                }
+                return data
             }
         }
     } catch {
         print(error.localizedDescription)
     }
-    return UIImage(systemName: "music.note")!
+    return Data()
 }
 func getArtistFromMetadata(metadata: [AVMetadataItem]) async -> String {
     do {
@@ -170,3 +180,4 @@ func getDurationFromUrl(selectedUrl: URL) async -> Float {
     }
     return 0.0
 }
+
