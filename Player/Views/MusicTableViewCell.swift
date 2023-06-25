@@ -22,7 +22,7 @@ class MusicTableViewCell: UITableViewCell {
             make.width.height.equalTo(50)
         }
         titleLabel.snp.makeConstraints { make in
-            make.left.equalTo(image.snp_rightMargin).offset(10)
+            make.left.equalTo(image.snp_rightMargin).offset(20)
             make.centerY.equalToSuperview()
             make.height.equalTo(50)
             make.right.equalTo(contentView.snp_rightMargin).offset(20)

@@ -1,6 +1,6 @@
 import UIKit
 import SnapKit
-
+//MARK: Change constaints
 protocol PlayerViewControllerDelegate {
     func changeSong(song: Audio)
 }
@@ -14,7 +14,6 @@ class PlayerViewController: UIViewController, PlayerViewControllerDelegate {
     
     override func viewDidLoad() {
         AudioPlayer.shared.delegate = self
-        super.viewDidLoad()
         setupView()
         if AudioPlayer.shared.isPlaying {
             self.imageView.image = AudioPlayer.shared.currentSong?.image
@@ -44,6 +43,7 @@ class PlayerViewController: UIViewController, PlayerViewControllerDelegate {
     @objc func repeatAction() {
         print(#function)
     }
+    //MARK: Change them all
     @objc func playStop() {
         if AudioPlayer.shared.currentSong != nil {
             if AudioPlayer.shared.isPlaying {
@@ -86,6 +86,7 @@ class PlayerViewController: UIViewController, PlayerViewControllerDelegate {
             print(sender.value)
         }
     }
+    
     func changeSong(song: Audio) {
         self.imageView.image = song.image
         self.slider.maximumValue = song.duration
@@ -96,17 +97,20 @@ class PlayerViewController: UIViewController, PlayerViewControllerDelegate {
 
 extension PlayerViewController {
     private func setupView() {
-        view.backgroundColor = .white
         let PlayPauseButton = UIButton(type: .system)
         let NextMusicButton = UIButton(type: .system)
         let PrevMusicButton = UIButton(type: .system)
         let Repeat = UIButton(type: .system)
         imageView.image = UIImage(systemName: "rectangle.fill")
         imageView.tintColor = .black
+        imageView.clipsToBounds = true
+        imageView.layer.cornerRadius = 40
+        label.textAlignment = .center
         label.text = "Nothing there buddy"
         label.font = .boldSystemFont(ofSize: 20)
         slider.tintColor = .black
         slider.thumbTintColor = .black
+        view.backgroundColor = .white
         view.addSubview(imageView)
         view.addSubview(PlayPauseButton)
         view.addSubview(NextMusicButton)
@@ -116,13 +120,16 @@ extension PlayerViewController {
         view.addSubview(label)
         imageView.snp.makeConstraints { make in
             make.height.equalTo(350)
-            make.width.equalToSuperview().offset(10)
+            make.left.equalTo(view.snp.left).offset(10)
+            make.right.equalTo(view.snp.right).offset(-10)
             make.centerY.equalToSuperview().offset(-30)
             make.centerX.equalToSuperview()
         }
         label.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.top.equalTo(imageView.snp.bottom).offset(30)
+            make.left.equalTo(view.snp.left).offset(10)
+            make.right.equalTo(view.snp.right).offset(-10)
         }
         slider.snp.makeConstraints { make in
             make.width.equalToSuperview().offset(-30)

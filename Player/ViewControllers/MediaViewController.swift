@@ -7,9 +7,9 @@ class MediaViewController: UIViewController, UIDocumentPickerDelegate, UITextFie
     
     let tableView = UITableView()
     let textField = UITextField()
+    let playerView = PlayerView()
     
     override func viewDidLoad() {
-        super.viewDidLoad()
         setupView()
     }
     @objc private func clearSearchText() {
@@ -27,10 +27,17 @@ class MediaViewController: UIViewController, UIDocumentPickerDelegate, UITextFie
         textField.resignFirstResponder()
         return true
     }
+    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+        try? AVAudioSession.sharedInstance().setActive(false)
+        return true
+    }
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        try? AVAudioSession.sharedInstance().setActive(true)
+    }
     func setupView() {
         let button = UIBarButtonItem(barButtonSystemItem: .add,target: self,action: #selector(add))
-        button.tintColor = .black
         let clearButton = UIButton(type: .custom)
+        button.tintColor = .black
         clearButton.setImage(UIImage(systemName: "x.circle"), for: .normal)
         clearButton.addTarget(self, action: #selector(clearSearchText), for: .touchUpInside)
         clearButton.tintColor = .black
@@ -39,29 +46,37 @@ class MediaViewController: UIViewController, UIDocumentPickerDelegate, UITextFie
         navigationController?.navigationBar.prefersLargeTitles = false
         navigationItem.largeTitleDisplayMode = .always
         navigationItem.rightBarButtonItem = button
-        tableView.register(MusicTableViewCell.self, forCellReuseIdentifier: "MusicCell")
-        tableView.delegate = self
-        tableView.dataSource = self
         textField.delegate = self
-        tableView.allowsSelection = true
+        textField.autocapitalizationType = .none
+        textField.autocorrectionType = .no
         textField.backgroundColor = UIColor(red: 248/255, green: 248/255, blue: 248/255, alpha: 1)
         textField.layer.cornerRadius = 10
         textField.placeholder = "Search"
         textField.rightView = clearButton
         textField.rightViewMode = .always
+        tableView.allowsSelection = true
+        tableView.register(MusicTableViewCell.self, forCellReuseIdentifier: "MusicCell")
+        tableView.delegate = self
+        tableView.dataSource = self
         view.addSubview(tableView)
         view.addSubview(textField)
+        view.addSubview(playerView)
         textField.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(10)
             make.trailing.equalToSuperview().offset(-10)
             make.height.equalTo(40)
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
         }
+        playerView.snp.makeConstraints { make in
+            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
+            make.width.equalToSuperview()
+            make.height.equalTo(50)
+        }
         tableView.snp.makeConstraints { make in
             make.top.equalTo(textField.snp.bottom).offset(10)
             make.leading.equalToSuperview()
             make.trailing.equalToSuperview()
-            make.bottom.equalToSuperview()
+            make.bottom.equalTo(playerView.snp.top)
         }
     }
 }
@@ -72,6 +87,17 @@ extension MediaViewController: UITableViewDelegate, UITableViewDataSource {
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         80
+    }
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+            return true
+        }
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            //MARK: Should change there by removing by name, not index and change StorageManager bruh
+            AudioPlayer.shared.songs.remove(at: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .automatic)
+            StorageManager.shared.save(songs: AudioPlayer.shared.songs)
+        }
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
@@ -99,16 +125,11 @@ extension MediaViewController {
             do {
                 try fileManager.moveItem(at: url, to: destinationURL)
                 print("Файл успешно перемещен в директорию документов")
-                if fileManager.fileExists(atPath: destinationURL.path) {
-                    print("Файл существует в директории документов")
-                } else {
-                    print("Файл не существует в директории документов")
-                }
             } catch {
                 print("Ошибка перемещения файла: \(error.localizedDescription)")
             }
             Task {
-                //MARK: Temporary
+                //MARK: Temporary funcs, change them all, optimize
                 if let metadata = await getMetadataFromURL(selectedUrl: url) {
                     let imageData = await getImageFromMetadata(metadata: metadata)
                     let artist = await getArtistFromMetadata(metadata: metadata)
@@ -123,6 +144,7 @@ extension MediaViewController {
         }
     }
 }
+//MARK: Same, optimize
 func getMetadataFromURL(selectedUrl: URL) async -> [AVMetadataItem]? {
     let asset = AVAsset(url: selectedUrl)
     do {
