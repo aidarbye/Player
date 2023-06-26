@@ -2,26 +2,32 @@ import UIKit
 import SnapKit
 import UniformTypeIdentifiers
 import AVKit
-
-class MediaViewController: UIViewController, UIDocumentPickerDelegate, UITextFieldDelegate, UIGestureRecognizerDelegate {
-    
+// MARK: Progress change timer isnt work correctly, view dont dissapear and when change dont changed.
+class MediaViewController: UIViewController {
     let tableView = UITableView()
     let textField = UITextField()
     let playerView = PlayerView()
+    var PlayerVC: PlayerViewController?
     var timer: Timer?
+    
     override func viewDidLoad() {
-        print("media init")
+        PlayerVC = PlayerViewController()
         setupView()
     }
     override func viewWillAppear(_ animated: Bool) {
+        print("apperaince")
         if let value = AudioPlayer.shared.audioPlayer?.currentTime {
-            self.playerView.progress.setProgress(Float(value) / AudioPlayer.shared.currentSong!.duration, animated: false)
+            self.playerView.progress.setProgress(
+                Float(value) / AudioPlayer.shared.songs[AudioPlayer.shared.currentIndex!].duration,
+                animated: false)
         }
         if timer == nil {
             timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { (_) in
                 if AudioPlayer.shared.isPlaying {
                     if let value = AudioPlayer.shared.audioPlayer?.currentTime {
-                        self.playerView.progress.progress = Float(value) / AudioPlayer.shared.currentSong!.duration
+                        self.playerView.progress.setProgress(
+                            Float(value) / AudioPlayer.shared.songs[AudioPlayer.shared.currentIndex!].duration,
+                            animated: false)
                         print(self.playerView.progress.progress)
                     }
                 }
@@ -29,28 +35,181 @@ class MediaViewController: UIViewController, UIDocumentPickerDelegate, UITextFie
         }
     }
     override func viewWillDisappear(_ animated: Bool) {
+        print("disapear")
         timer?.invalidate()
         timer = nil
+    }
+}
+// MARK: TableViewDelegate
+extension MediaViewController: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        AudioPlayer.shared.songs.count
+    }
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        80
+    }
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            var index = 0
+            for i in AudioPlayer.shared.songs.indices {
+                if AudioPlayer.shared.songs[i] == AudioPlayer.shared.songs[indexPath.row] {
+                    index = i
+                    break
+                }
+            }
+            AudioPlayer.shared.songs.remove(at: index)
+            tableView.deleteRows(at: [indexPath], with: .automatic)
+            StorageManager.shared.save(songs: AudioPlayer.shared.songs)
+        }
+    }
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        AudioPlayer.shared.playAudio(fileName: AudioPlayer.shared.songs[indexPath.row].fileName)
+        AudioPlayer.shared.currentIndex = indexPath.row
+        AudioPlayer.shared.delegate?.changeSong(song: AudioPlayer.shared.songs[indexPath.row])
+        AudioPlayer.shared.delegatePV?.songChange(song: AudioPlayer.shared.songs[indexPath.row])
+    }
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = MusicTableViewCell(style: .default, reuseIdentifier: "MusicCell")
+        cell.titleLabel.text = AudioPlayer.shared.songs[indexPath.row].title
+        cell.image.image = AudioPlayer.shared.songs[indexPath.row].image
+        return cell
+    }
+}
+
+// MARK: @objc methods
+extension MediaViewController {
+    @objc private func swipeGesture(_ gestureRecognizer: UISwipeGestureRecognizer) {
+        if gestureRecognizer.state == .ended {
+            guard let pvc = PlayerVC else {return}
+            present(pvc, animated: true)
+        }
+    }
+    @objc private func tapGesture() {
+        guard let pvc = PlayerVC else { return }
+        present(pvc, animated: true)
     }
     @objc private func clearSearchText() {
         textField.text = ""
     }
     @objc private func add() {
         let supportedTypes: [UTType] = [UTType.audio]
-        let pickerViewController = UIDocumentPickerViewController(forOpeningContentTypes: supportedTypes, asCopy: true)
+        let pickerViewController = UIDocumentPickerViewController(
+                                        forOpeningContentTypes: supportedTypes,
+                                        asCopy: true)
         pickerViewController.delegate = self
         pickerViewController.allowsMultipleSelection = true
         pickerViewController.shouldShowFileExtensions = true
         self.present(pickerViewController, animated: true, completion: nil)
     }
+}
+
+// MARK: TextFieldDelegate methods
+extension MediaViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
     }
+}
+
+// MARK: DocumentPicker delegate method
+extension MediaViewController: UIDocumentPickerDelegate {
+    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+        let fileManager = FileManager.default
+        let documentsDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        for url in urls {
+            let fileName = url.lastPathComponent
+            let destinationURL = documentsDirectory.appendingPathComponent(fileName)
+            DispatchQueue.global(qos: .background).async {
+                do {
+                    try fileManager.moveItem(at: url, to: destinationURL)
+                    print("Файл успешно перемещен в директорию документов")
+                } catch {
+                    print("Ошибка перемещения файла: \(error.localizedDescription)")
+                }
+            }
+            Task {
+                if let metadata = await getMetadataFromURL(selectedUrl: url) {
+                    let imageData = await getImageFromMetadata(metadata: metadata)
+                    let artist = await getArtistFromMetadata(metadata: metadata)
+                    let title = await getTitleFromMetadata(metadata: metadata)
+                    let duration = await getDurationFromUrl(selectedUrl: url)
+                    let fileName = url.absoluteURL.lastPathComponent
+                    let AudioFile = Audio(fileName: fileName,title: title,artist: artist, duration: duration, imageData: imageData)
+                    AudioPlayer.shared.songs.insert(AudioFile, at: AudioPlayer.shared.songs.count)
+                    tableView.insertRows(at: [IndexPath(row: AudioPlayer.shared.songs.count - 1, section: 0)], with: .automatic)
+                }
+            }
+        }
+    }
+    func getMetadataFromURL(selectedUrl: URL) async -> [AVMetadataItem]? {
+        let asset = AVAsset(url: selectedUrl)
+        do {
+         return try await asset.load(.commonMetadata)
+        } catch {
+         print(error.localizedDescription)
+        }
+        return nil
+    }
+    func getImageFromMetadata(metadata: [AVMetadataItem]) async -> Data {
+        do {
+            for metadataItem in metadata {
+                if metadataItem.commonKey?.rawValue == "artwork" {
+                    let data = try await metadataItem.load(.value) as! Data
+                    return data
+                }
+            }
+        } catch {
+            print(error.localizedDescription)
+        }
+        return Data()
+    }
+    func getArtistFromMetadata(metadata: [AVMetadataItem]) async -> String {
+        do {
+            for metadataItem in metadata {
+                if metadataItem.commonKey?.rawValue == "artist" {
+                    return try await metadataItem.load(.value) as! String
+                }
+            }
+        } catch {
+            print(error.localizedDescription)
+        }
+        return "NoName"
+    }
+    func getTitleFromMetadata(metadata: [AVMetadataItem]) async -> String {
+        do {
+            for metadataItem in metadata {
+                if metadataItem.commonKey?.rawValue == "title" {
+                    return try await metadataItem.load(.value) as! String
+                }
+            }
+        } catch {
+            print(error.localizedDescription)
+        }
+        return "NoName"
+    }
+    func getDurationFromUrl(selectedUrl: URL) async -> Float {
+        let asset = AVAsset(url: selectedUrl)
+        do {
+            let duration = try await asset.load(.duration)
+            let seconds = CMTimeGetSeconds(duration)
+            return Float(seconds)
+        } catch {
+            print(error.localizedDescription)
+        }
+        return 0.0
+    }
+}
+
+// MARK: UI
+extension MediaViewController {
     func setupView() {
-        let button = UIBarButtonItem(barButtonSystemItem: .add,target: self,action: #selector(add))
+        let addButton = UIBarButtonItem(barButtonSystemItem: .add,target: self,action: #selector(add))
+        addButton.tintColor = .black
         let clearButton = UIButton(type: .custom)
-        button.tintColor = .black
         clearButton.setImage(UIImage(systemName: "x.circle"), for: .normal)
         clearButton.addTarget(self, action: #selector(clearSearchText), for: .touchUpInside)
         clearButton.tintColor = .black
@@ -58,7 +217,8 @@ class MediaViewController: UIViewController, UIDocumentPickerDelegate, UITextFie
         view.backgroundColor = .white
         navigationController?.navigationBar.prefersLargeTitles = false
         navigationItem.largeTitleDisplayMode = .always
-        navigationItem.rightBarButtonItem = button
+        navigationItem.rightBarButtonItem = addButton
+        textField.delegate = self
         textField.autocapitalizationType = .none
         textField.autocorrectionType = .no
         textField.backgroundColor = UIColor(red: 248/255, green: 248/255, blue: 248/255, alpha: 1)
@@ -70,6 +230,11 @@ class MediaViewController: UIViewController, UIDocumentPickerDelegate, UITextFie
         tableView.register(MusicTableViewCell.self, forCellReuseIdentifier: "MusicCell")
         tableView.delegate = self
         tableView.dataSource = self
+        let tap = UITapGestureRecognizer(target: self, action: #selector(tapGesture))
+        let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(swipeGesture(_:)))
+        panGestureRecognizer.cancelsTouchesInView = false
+        playerView.addGestureRecognizer(panGestureRecognizer)
+        playerView.addGestureRecognizer(tap)
         view.addSubview(tableView)
         view.addSubview(textField)
         view.addSubview(playerView)
@@ -92,140 +257,3 @@ class MediaViewController: UIViewController, UIDocumentPickerDelegate, UITextFie
         }
     }
 }
-// MARK: TableViewDelegate
-extension MediaViewController: UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        AudioPlayer.shared.songs.count
-    }
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        80
-    }
-//    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-//        if AudioPlayer.shared.currentIndex == indexPath.row {
-//            cell.layer.borderColor = CGColor(red: 255/255, green: 0, blue: 0, alpha: 1)
-//            cell.layer.borderWidth = 3
-//        }
-//    }
-    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-            return true
-        }
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            var index = 0
-            for i in AudioPlayer.shared.songs.indices {
-                if AudioPlayer.shared.songs[i] == AudioPlayer.shared.songs[indexPath.row] {
-                    index = i
-                    break
-                }
-            }
-            AudioPlayer.shared.songs.remove(at: index)
-            tableView.deleteRows(at: [indexPath], with: .automatic)
-            StorageManager.shared.save(songs: AudioPlayer.shared.songs)
-        }
-    }
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-        AudioPlayer.shared.playAudio(fileName: AudioPlayer.shared.songs[indexPath.row].fileName)
-        AudioPlayer.shared.currentIndex = indexPath.row
-        AudioPlayer.shared.currentSong = AudioPlayer.shared.songs[indexPath.row]
-        AudioPlayer.shared.delegate?.changeSong(
-            song: AudioPlayer.shared.songs[indexPath.row])
-        AudioPlayer.shared.delegatePV?.songChange(
-            song: AudioPlayer.shared.songs[indexPath.row])
-    }
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = MusicTableViewCell(style: .default, reuseIdentifier: "MusicCell")
-        cell.titleLabel.text = AudioPlayer.shared.songs[indexPath.row].title
-        cell.image.image = AudioPlayer.shared.songs[indexPath.row].image
-        return cell
-    }
-}
-// MARK: DocumentPicker
-extension MediaViewController {
-    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
-        let fileManager = FileManager.default
-        let documentsDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        for url in urls {
-            let fileName = url.lastPathComponent
-            let destinationURL = documentsDirectory.appendingPathComponent(fileName)
-            do {
-                try fileManager.moveItem(at: url, to: destinationURL)
-                print("Файл успешно перемещен в директорию документов")
-            } catch {
-                print("Ошибка перемещения файла: \(error.localizedDescription)")
-            }
-            Task {
-                //MARK: Temporary funcs, change them all, optimize
-                if let metadata = await getMetadataFromURL(selectedUrl: url) {
-                    let imageData = await getImageFromMetadata(metadata: metadata)
-                    let artist = await getArtistFromMetadata(metadata: metadata)
-                    let title = await getTitleFromMetadata(metadata: metadata)
-                    let duration = await getDurationFromUrl(selectedUrl: url)
-                    let fileName = url.absoluteURL.lastPathComponent
-                    let AudioFile = Audio(fileName: fileName,title: title,artist: artist, duration: duration, imageData: imageData)
-                    AudioPlayer.shared.songs.insert(AudioFile, at: AudioPlayer.shared.songs.count)
-                    tableView.insertRows(at: [IndexPath(row: AudioPlayer.shared.songs.count - 1, section: 0)], with: .automatic)
-                }
-            }
-        }
-    }
-}
-//MARK: Same, optimize
-func getMetadataFromURL(selectedUrl: URL) async -> [AVMetadataItem]? {
-    let asset = AVAsset(url: selectedUrl)
-    do {
-     return try await asset.load(.commonMetadata)
-    } catch {
-     print(error.localizedDescription)
-    }
-    return nil
-}
-func getImageFromMetadata(metadata: [AVMetadataItem]) async -> Data {
-    do {
-        for metadataItem in metadata {
-            if metadataItem.commonKey?.rawValue == "artwork" {
-                let data = try await metadataItem.load(.value) as! Data
-                return data
-            }
-        }
-    } catch {
-        print(error.localizedDescription)
-    }
-    return Data()
-}
-func getArtistFromMetadata(metadata: [AVMetadataItem]) async -> String {
-    do {
-        for metadataItem in metadata {
-            if metadataItem.commonKey?.rawValue == "artist" {
-                return try await metadataItem.load(.value) as! String
-            }
-        }
-    } catch {
-        print(error.localizedDescription)
-    }
-    return "NoName"
-}
-func getTitleFromMetadata(metadata: [AVMetadataItem]) async -> String {
-    do {
-        for metadataItem in metadata {
-            if metadataItem.commonKey?.rawValue == "title" {
-                return try await metadataItem.load(.value) as! String
-            }
-        }
-    } catch {
-        print(error.localizedDescription)
-    }
-    return "NoName"
-}
-func getDurationFromUrl(selectedUrl: URL) async -> Float {
-    let asset = AVAsset(url: selectedUrl)
-    do {
-        let duration = try await asset.load(.duration)
-        let seconds = CMTimeGetSeconds(duration)
-        return Float(seconds)
-    } catch {
-        print(error.localizedDescription)
-    }
-    return 0.0
-}
-

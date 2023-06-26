@@ -1,38 +1,43 @@
 import UIKit
 import SnapKit
 import Foundation
+
 protocol PlayerViewSongControllerProtocol {
     func songChange(song: Audio)
 }
-class PlayerView: UIView, PlayerViewSongControllerProtocol {
+
+class PlayerView: UIView {
     let label = UILabel()
     let progress = UIProgressView()
     let playPauseButton = UIButton()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         AudioPlayer.shared.delegatePV = self
-        progress.progress = 0
+        setupView()
+    }
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        AudioPlayer.shared.delegatePV = self
         setupView()
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
     @objc private func playPause() {
-        if AudioPlayer.shared.currentSong != nil {
-            if AudioPlayer.shared.isPlaying {
-                AudioPlayer.shared.pause()
-            } else {
-                AudioPlayer.shared.resume()
-            }
-            AudioPlayer.shared.isPlaying.toggle()
-        }
+        AudioPlayer.shared.playPause()
     }
+}
+
+//MARK: PlayerViewSongControllerProtocol methods
+extension PlayerView: PlayerViewSongControllerProtocol {
     func songChange(song: Audio) {
         self.label.text = song.title
     }
+}
+
+// MARK: UI
+extension PlayerView {
     func setupView() {
-        backgroundColor = UIColor(red: 228/255, green: 228/255, blue: 228/255, alpha: 1)
+        backgroundColor = UIColor(red: 228/255, green: 228/255, blue: 228/255, alpha: 0.8)
         addSubview(label)
         addSubview(progress)
         addSubview(playPauseButton)
@@ -41,9 +46,11 @@ class PlayerView: UIView, PlayerViewSongControllerProtocol {
         progress.backgroundColor = .black
         progress.progressTintColor = .red
         progress.progressViewStyle = .default
+        progress.progress = 0
         playPauseButton.setImage(UIImage(systemName: "play.fill"), for: .normal)
         playPauseButton.tintColor = .black
         playPauseButton.addTarget(self, action: #selector(playPause), for: .touchUpInside)
+        
         progress.snp.makeConstraints { make in
             make.top.equalTo(snp.top)
             make.width.equalToSuperview()

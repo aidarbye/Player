@@ -15,14 +15,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         mainViewController.tabBarItem = UITabBarItem(title: "Media",
                                                        image: UIImage(systemName: "music.note.list"),
                                                        tag: 0)
-        let playerViewController = UINavigationController(rootViewController: PlayerViewController())
-        playerViewController.tabBarItem = UITabBarItem(title: "Player",
+        let emptyViewController = UINavigationController(rootViewController: EmptyViewController())
+        emptyViewController.tabBarItem = UITabBarItem(title: "EMPTY",
                                                        image: UIImage(systemName: "play"),
                                                        tag: 1)
         let tabBarController = UITabBarController()
         tabBarController.tabBar.backgroundColor = UIColor(red: 228/255, green: 228/255, blue: 228/255, alpha: 1)
         tabBarController.tabBar.tintColor = .black
-        tabBarController.viewControllers = [mainViewController, playerViewController]
+        tabBarController.viewControllers = [mainViewController, emptyViewController]
         window?.rootViewController = tabBarController
         window?.makeKeyAndVisible()
     }
@@ -32,8 +32,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This occurs shortly after the scene enters the background, or when its session is discarded.
         // Release any resources associated with this scene that can be re-created the next time the scene connects.
         // The scene may re-connect later, as its session was not necessarily discarded (see `application:didDiscardSceneSessions` instead).
-        //MARK: Change there too
-        StorageManager.shared.save(songs: AudioPlayer.shared.songs)
     }
 
     func sceneDidBecomeActive(_ scene: UIScene) {

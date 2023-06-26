@@ -1,36 +1,36 @@
 import UIKit
 import SnapKit
 import MediaPlayer
-//MARK: Change constaints
+
+//MARK: Change constaints, pause button also
 protocol PlayerViewControllerDelegate {
     func changeSong(song: Audio)
 }
 
-class PlayerViewController: UIViewController, PlayerViewControllerDelegate {
+class PlayerViewController: UIViewController {
     let imageView = UIImageView()
     let slider = UISlider()
     let label = UILabel()
-    let shared = AudioPlayer.shared
-    var timer: Timer?
+    
     var delegate: PlayerViewControllerDelegate?
+    var timer: Timer?
     
     override func viewDidLoad() {
-        AudioPlayer.shared.delegate = self
         setupView()
-        if AudioPlayer.shared.currentSong != nil {
-            self.imageView.image = AudioPlayer.shared.currentSong?.image
-            self.slider.maximumValue = AudioPlayer.shared.currentSong!.duration
-            self.label.text = AudioPlayer.shared.currentSong?.title
-        }
+        AudioPlayer.shared.delegate = self
+        guard let index = AudioPlayer.shared.currentIndex else { return }
+        self.imageView.image = AudioPlayer.shared.songs[index].image
+        self.slider.maximumValue = AudioPlayer.shared.songs[index].duration
+        self.label.text = AudioPlayer.shared.songs[index].title
     }
     override func viewWillAppear(_ animated: Bool) {
-        if let value = self.shared.audioPlayer?.currentTime {
+        if let value = AudioPlayer.shared.audioPlayer?.currentTime {
             self.slider.value = Float(value)
         }
         if timer == nil {
             timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { (_) in
-                if self.shared.isPlaying {
-                    if let value = self.shared.audioPlayer?.currentTime {
+                if AudioPlayer.shared.isPlaying {
+                    if let value = AudioPlayer.shared.audioPlayer?.currentTime {
                         self.slider.value = Float(value)
                         print(self.slider.value)
                     }
@@ -42,52 +42,41 @@ class PlayerViewController: UIViewController, PlayerViewControllerDelegate {
         timer?.invalidate()
         timer = nil
     }
+}
+
+// MARK: objc methods
+extension PlayerViewController {
     @objc func repeatAction() {
         print(#function)
     }
-    //MARK: Change them all
     @objc func playStop() {
-        if AudioPlayer.shared.currentSong != nil {
-            if AudioPlayer.shared.isPlaying {
-                AudioPlayer.shared.pause()
-            } else {
-                AudioPlayer.shared.resume()
-            }
-            AudioPlayer.shared.isPlaying.toggle()
-        }
+        AudioPlayer.shared.playPause()
     }
     @objc func NextMusicPlay() {
-        if let _ = shared.audioPlayer {
-            if AudioPlayer.shared.songs.isEmpty {
-                return
-            }
-            AudioPlayer.shared.playNextSong()
-        }
+        AudioPlayer.shared.playNextSong()
     }
     @objc func PrevMusicPlay() {
-        if let _ = shared.audioPlayer {
-            if AudioPlayer.shared.songs.isEmpty {
-                return
-            }
-            AudioPlayer.shared.playPrevSong()
-        }
+        AudioPlayer.shared.playPrevSong()
     }
     @objc func scrubAudio() {
-        print(#function)
-        if let audioPlayer = shared.audioPlayer {
-            shared.isPlaying = true
+        if let audioPlayer = AudioPlayer.shared.audioPlayer {
+            AudioPlayer.shared.isPlaying = true
             audioPlayer.currentTime = TimeInterval(slider.value)
             audioPlayer.prepareToPlay()
             audioPlayer.play()
         }
     }
     @objc func sliderValueChanged(_ sender: UISlider) {
-        if let audioPlayer = shared.audioPlayer {
-            shared.isPlaying = false
+        if let audioPlayer = AudioPlayer.shared.audioPlayer {
+            AudioPlayer.shared.isPlaying = false
             audioPlayer.stop()
             print(sender.value)
         }
     }
+}
+
+// MARK: PlayerViewControllerDelegate methods
+extension PlayerViewController: PlayerViewControllerDelegate {
     func changeSong(song: Audio) {
         self.imageView.image = song.image
         self.slider.maximumValue = song.duration
@@ -95,7 +84,7 @@ class PlayerViewController: UIViewController, PlayerViewControllerDelegate {
     }
 }
 
-
+// MARK: UI
 extension PlayerViewController {
     private func setupView() {
         let PlayPauseButton = UIButton(type: .system)
@@ -120,11 +109,11 @@ extension PlayerViewController {
         view.addSubview(Repeat)
         view.addSubview(label)
         imageView.snp.makeConstraints { make in
-            make.height.equalTo(350)
+            make.top.equalTo(view.snp.top).offset(20)
             make.left.equalTo(view.snp.left).offset(10)
             make.right.equalTo(view.snp.right).offset(-10)
-            make.centerY.equalToSuperview().offset(-30)
             make.centerX.equalToSuperview()
+            make.height.equalTo(view.layer.bounds.width / 1.2)
         }
         label.snp.makeConstraints { make in
             make.centerX.equalToSuperview()

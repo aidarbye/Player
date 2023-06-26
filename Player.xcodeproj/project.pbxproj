@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		B42535E82A483DDC0087A64F /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42535E72A483DDC0087A64F /* StorageManager.swift */; };
 		B42535EA2A48C86B0087A64F /* PlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42535E92A48C86B0087A64F /* PlayerView.swift */; };
+		B42535EC2A4A29DC0087A64F /* EmptyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42535EB2A4A29DC0087A64F /* EmptyViewController.swift */; };
 		B4402C032A31BEB300B1CC46 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4402C022A31BEB300B1CC46 /* AppDelegate.swift */; };
 		B4402C052A31BEB300B1CC46 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4402C042A31BEB300B1CC46 /* SceneDelegate.swift */; };
 		B4402C072A31BEB300B1CC46 /* MediaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4402C062A31BEB300B1CC46 /* MediaViewController.swift */; };
@@ -24,6 +25,7 @@
 /* Begin PBXFileReference section */
 		B42535E72A483DDC0087A64F /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
 		B42535E92A48C86B0087A64F /* PlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerView.swift; sourceTree = "<group>"; };
+		B42535EB2A4A29DC0087A64F /* EmptyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyViewController.swift; sourceTree = "<group>"; };
 		B4402BFF2A31BEB300B1CC46 /* Player.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Player.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B4402C022A31BEB300B1CC46 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B4402C042A31BEB300B1CC46 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -112,6 +114,7 @@
 			children = (
 				B4402C062A31BEB300B1CC46 /* MediaViewController.swift */,
 				B490B7832A31C3CD004F6F15 /* PlayerViewController.swift */,
+				B42535EB2A4A29DC0087A64F /* EmptyViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -194,6 +197,7 @@
 			files = (
 				B42535EA2A48C86B0087A64F /* PlayerView.swift in Sources */,
 				B490B7882A325EE0004F6F15 /* Audio.swift in Sources */,
+				B42535EC2A4A29DC0087A64F /* EmptyViewController.swift in Sources */,
 				B490B7862A31DEBF004F6F15 /* MusicTableViewCell.swift in Sources */,
 				B4402C072A31BEB300B1CC46 /* MediaViewController.swift in Sources */,
 				B490B7842A31C3CD004F6F15 /* PlayerViewController.swift in Sources */,
