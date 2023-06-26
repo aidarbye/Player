@@ -3,13 +3,14 @@ import SnapKit
 import UniformTypeIdentifiers
 import AVKit
 
-class MediaViewController: UIViewController, UIDocumentPickerDelegate, UITextFieldDelegate {
+class MediaViewController: UIViewController, UIDocumentPickerDelegate, UITextFieldDelegate, UIGestureRecognizerDelegate {
     
     let tableView = UITableView()
     let textField = UITextField()
     let playerView = PlayerView()
     
     override func viewDidLoad() {
+        print("media init")
         setupView()
     }
     @objc private func clearSearchText() {
@@ -105,6 +106,8 @@ extension MediaViewController: UITableViewDelegate, UITableViewDataSource {
         AudioPlayer.shared.currentIndex = indexPath.row
         AudioPlayer.shared.currentSong = AudioPlayer.shared.songs[indexPath.row]
         AudioPlayer.shared.delegate?.changeSong(
+            song: AudioPlayer.shared.songs[indexPath.row])
+        AudioPlayer.shared.delegatePV?.songChange(
             song: AudioPlayer.shared.songs[indexPath.row])
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

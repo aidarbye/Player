@@ -2,10 +2,11 @@ import Foundation
 import AVFoundation
 import UIKit
 
-class AudioPlayer: NSObject, AVAudioPlayerDelegate{
+class AudioPlayer: NSObject, AVAudioPlayerDelegate {
     static let shared = AudioPlayer()
     var audioPlayer: AVAudioPlayer?
     var delegate: PlayerViewControllerDelegate?
+    var delegatePV: PlayerViewSongControllerProtocol?
     var currentSong: Audio?
     var currentIndex: Int = 0
     var isPlaying: Bool = false
@@ -50,6 +51,7 @@ class AudioPlayer: NSObject, AVAudioPlayerDelegate{
         }
         AudioPlayer.shared.playAudio(fileName:AudioPlayer.shared.songs[AudioPlayer.shared.currentIndex].fileName)
         delegate?.changeSong(song: AudioPlayer.shared.songs[AudioPlayer.shared.currentIndex])
+        delegatePV?.songChange(song: AudioPlayer.shared.songs[AudioPlayer.shared.currentIndex])
     }
     func playPrevSong() {
         if AudioPlayer.shared.currentIndex == 0 {
@@ -59,6 +61,7 @@ class AudioPlayer: NSObject, AVAudioPlayerDelegate{
         }
         AudioPlayer.shared.playAudio(fileName:AudioPlayer.shared.songs[AudioPlayer.shared.currentIndex].fileName)
         delegate?.changeSong(song: AudioPlayer.shared.songs[AudioPlayer.shared.currentIndex])
+        delegatePV?.songChange(song: AudioPlayer.shared.songs[AudioPlayer.shared.currentIndex])
     }
 }
 /* MARK: Add later

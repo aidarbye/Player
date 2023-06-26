@@ -1,17 +1,33 @@
 import UIKit
 import SnapKit
 import Foundation
-class PlayerView: UIView {
+protocol PlayerViewSongControllerProtocol {
+    func songChange(song: Audio)
+}
+class PlayerView: UIView, PlayerViewSongControllerProtocol {
     let label = UILabel()
     let progress = UIProgressView()
     let playPauseButton = UIButton()
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
+        AudioPlayer.shared.delegatePV = self
         setupView()
     }
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    @objc private func playPause() {
+        if AudioPlayer.shared.currentSong != nil {
+            if AudioPlayer.shared.isPlaying {
+                AudioPlayer.shared.pause()
+            } else {
+                AudioPlayer.shared.resume()
+            }
+            AudioPlayer.shared.isPlaying.toggle()
+        }
+    }
+    func songChange(song: Audio) {
+        self.label.text = song.title
     }
     func setupView() {
         backgroundColor = UIColor(red: 228/255, green: 228/255, blue: 228/255, alpha: 1)
@@ -23,6 +39,7 @@ class PlayerView: UIView {
         progress.backgroundColor = .black
         playPauseButton.setImage(UIImage(systemName: "play.fill"), for: .normal)
         playPauseButton.tintColor = .black
+        playPauseButton.addTarget(self, action: #selector(playPause), for: .touchUpInside)
         progress.snp.makeConstraints { make in
             make.top.equalTo(snp.top)
             make.width.equalToSuperview()

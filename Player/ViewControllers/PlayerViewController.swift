@@ -1,5 +1,6 @@
 import UIKit
 import SnapKit
+import MediaPlayer
 //MARK: Change constaints
 protocol PlayerViewControllerDelegate {
     func changeSong(song: Audio)
@@ -11,11 +12,12 @@ class PlayerViewController: UIViewController, PlayerViewControllerDelegate {
     let label = UILabel()
     let shared = AudioPlayer.shared
     var timer: Timer?
+    var delegate: PlayerViewControllerDelegate?
     
     override func viewDidLoad() {
         AudioPlayer.shared.delegate = self
         setupView()
-        if AudioPlayer.shared.isPlaying {
+        if AudioPlayer.shared.currentSong != nil {
             self.imageView.image = AudioPlayer.shared.currentSong?.image
             self.slider.maximumValue = AudioPlayer.shared.currentSong!.duration
             self.label.text = AudioPlayer.shared.currentSong?.title
@@ -86,7 +88,6 @@ class PlayerViewController: UIViewController, PlayerViewControllerDelegate {
             print(sender.value)
         }
     }
-    
     func changeSong(song: Audio) {
         self.imageView.image = song.image
         self.slider.maximumValue = song.duration
