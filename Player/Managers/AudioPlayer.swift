@@ -18,20 +18,22 @@ class AudioPlayer: NSObject, AVAudioPlayerDelegate {
         print("initializain of \(self)")
     }
     func playAudio(fileName: String) {
-        do {
-            let fileManager = FileManager.default
-            let documentsDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
-            let soundFileURL = documentsDirectory.appendingPathComponent(fileName)
-            isPlaying = true
-            try AVAudioSession.sharedInstance().setCategory(.playback)
-            try AVAudioSession.sharedInstance().setActive(true)
-            audioPlayer = try AVAudioPlayer(contentsOf: soundFileURL)
-            audioPlayer?.delegate = self
-            audioPlayer?.prepareToPlay()
-            audioPlayer?.play()
-        } catch let error {
-            print(error)
-            print("Ошибка при воспроизведении аудио: \(error.localizedDescription)")
+        DispatchQueue.global().async { [self] in
+            do {
+                let fileManager = FileManager.default
+                let documentsDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
+                let soundFileURL = documentsDirectory.appendingPathComponent(fileName)
+                isPlaying = true
+                try AVAudioSession.sharedInstance().setCategory(.playback)
+                try AVAudioSession.sharedInstance().setActive(true)
+                audioPlayer = try AVAudioPlayer(contentsOf: soundFileURL)
+                audioPlayer?.delegate = self
+                audioPlayer?.prepareToPlay()
+                audioPlayer?.play()
+            } catch let error {
+                print(error)
+                print("Ошибка при воспроизведении аудио: \(error.localizedDescription)")
+            }
         }
     }
     func pause() {

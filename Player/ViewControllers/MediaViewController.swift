@@ -8,10 +8,29 @@ class MediaViewController: UIViewController, UIDocumentPickerDelegate, UITextFie
     let tableView = UITableView()
     let textField = UITextField()
     let playerView = PlayerView()
-    
+    var timer: Timer?
     override func viewDidLoad() {
         print("media init")
         setupView()
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        if let value = AudioPlayer.shared.audioPlayer?.currentTime {
+            self.playerView.progress.setProgress(Float(value) / AudioPlayer.shared.currentSong!.duration, animated: false)
+        }
+        if timer == nil {
+            timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { (_) in
+                if AudioPlayer.shared.isPlaying {
+                    if let value = AudioPlayer.shared.audioPlayer?.currentTime {
+                        self.playerView.progress.progress = Float(value) / AudioPlayer.shared.currentSong!.duration
+                        print(self.playerView.progress.progress)
+                    }
+                }
+            }
+        }
+    }
+    override func viewWillDisappear(_ animated: Bool) {
+        timer?.invalidate()
+        timer = nil
     }
     @objc private func clearSearchText() {
         textField.text = ""
@@ -28,13 +47,6 @@ class MediaViewController: UIViewController, UIDocumentPickerDelegate, UITextFie
         textField.resignFirstResponder()
         return true
     }
-    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
-        try? AVAudioSession.sharedInstance().setActive(false)
-        return true
-    }
-    func textFieldDidEndEditing(_ textField: UITextField) {
-        try? AVAudioSession.sharedInstance().setActive(true)
-    }
     func setupView() {
         let button = UIBarButtonItem(barButtonSystemItem: .add,target: self,action: #selector(add))
         let clearButton = UIButton(type: .custom)
@@ -47,7 +59,6 @@ class MediaViewController: UIViewController, UIDocumentPickerDelegate, UITextFie
         navigationController?.navigationBar.prefersLargeTitles = false
         navigationItem.largeTitleDisplayMode = .always
         navigationItem.rightBarButtonItem = button
-        textField.delegate = self
         textField.autocapitalizationType = .none
         textField.autocorrectionType = .no
         textField.backgroundColor = UIColor(red: 248/255, green: 248/255, blue: 248/255, alpha: 1)
@@ -89,13 +100,25 @@ extension MediaViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         80
     }
+//    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+//        if AudioPlayer.shared.currentIndex == indexPath.row {
+//            cell.layer.borderColor = CGColor(red: 255/255, green: 0, blue: 0, alpha: 1)
+//            cell.layer.borderWidth = 3
+//        }
+//    }
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
             return true
         }
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            //MARK: Should change there by removing by name, not index and change StorageManager bruh
-            AudioPlayer.shared.songs.remove(at: indexPath.row)
+            var index = 0
+            for i in AudioPlayer.shared.songs.indices {
+                if AudioPlayer.shared.songs[i] == AudioPlayer.shared.songs[indexPath.row] {
+                    index = i
+                    break
+                }
+            }
+            AudioPlayer.shared.songs.remove(at: index)
             tableView.deleteRows(at: [indexPath], with: .automatic)
             StorageManager.shared.save(songs: AudioPlayer.shared.songs)
         }

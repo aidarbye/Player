@@ -11,8 +11,10 @@ class PlayerView: UIView, PlayerViewSongControllerProtocol {
     override init(frame: CGRect) {
         super.init(frame: frame)
         AudioPlayer.shared.delegatePV = self
+        progress.progress = 0
         setupView()
     }
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -37,6 +39,8 @@ class PlayerView: UIView, PlayerViewSongControllerProtocol {
         label.text = "nothing"
         label.textAlignment = .center
         progress.backgroundColor = .black
+        progress.progressTintColor = .red
+        progress.progressViewStyle = .default
         playPauseButton.setImage(UIImage(systemName: "play.fill"), for: .normal)
         playPauseButton.tintColor = .black
         playPauseButton.addTarget(self, action: #selector(playPause), for: .touchUpInside)

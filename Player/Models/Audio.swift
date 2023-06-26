@@ -2,7 +2,7 @@ import Foundation
 import CoreData
 import UIKit
 
-struct Audio: Codable {
+struct Audio: Codable, Equatable {
     var fileName: String
     var title: String
     var artist: String
