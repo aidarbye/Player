@@ -23,18 +23,14 @@ class PlayerViewController: UIViewController {
         self.label.text = AudioPlayer.shared.songs[index].title
     }
     override func viewWillAppear(_ animated: Bool) {
-        if let value = AudioPlayer.shared.audioPlayer?.currentTime()
-        {
-            self.slider.value =
-                Float(value.seconds)
+        if let value = AudioPlayer.shared.audioPlayer?.currentTime() {
+            self.slider.value = Float(value.seconds)
         }
         if timer == nil {
             timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { (_) in
                 if AudioPlayer.shared.isPlaying {
-                    if let value = AudioPlayer.shared.audioPlayer?.currentTime()
-                    {
-                        self.slider.value =
-                            Float(value.seconds)
+                    if let value = AudioPlayer.shared.audioPlayer?.currentTime() {
+                        self.slider.value = Float(value.seconds)
                     }
                 }
             }
@@ -51,6 +47,9 @@ extension PlayerViewController {
     @objc func repeatAction() {
         print(#function)
     }
+    @objc func shuffle() {
+        
+    }
     @objc func playStop() {
         AudioPlayer.shared.playPause()
     }
@@ -63,7 +62,8 @@ extension PlayerViewController {
     @objc func scrubAudio() {
         if let audioPlayer = AudioPlayer.shared.audioPlayer {
             AudioPlayer.shared.isPlaying = true
-            audioPlayer.seek(to: CMTime(seconds: Double(slider.value), preferredTimescale: 1), toleranceBefore: .zero, toleranceAfter: .zero)
+            audioPlayer.seek(to: CMTime(seconds: Double(slider.value), preferredTimescale: 1),
+                             toleranceBefore: .zero, toleranceAfter: .zero)
             audioPlayer.play()
         }
     }
@@ -73,9 +73,6 @@ extension PlayerViewController {
             audioPlayer.pause()
             print(sender.value)
         }
-    }
-    @objc func shuffle() {
-        
     }
 }
 

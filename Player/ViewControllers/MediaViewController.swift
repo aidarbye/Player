@@ -18,21 +18,17 @@ class MediaViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         print("apperaince")
         if let value = AudioPlayer.shared.audioPlayer?.currentTime(),
-           let duration = AudioPlayer.shared.audioPlayer?.currentItem?.duration
-        {
-            self.playerView.progress.setProgress(
-                Float(value.seconds / duration.seconds),
-                animated: false)
+           let duration = AudioPlayer.shared.audioPlayer?.currentItem?.duration {
+                self.playerView.progress.setProgress(Float(value.seconds / duration.seconds),
+                                                     animated: false)
         }
         if timer == nil {
             self.timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { (_) in
                 if AudioPlayer.shared.isPlaying {
                     if let value = AudioPlayer.shared.audioPlayer?.currentTime(),
-                       let duration = AudioPlayer.shared.audioPlayer?.currentItem?.duration
-                    {
-                        self.playerView.progress.setProgress(
-                            Float(value.seconds / duration.seconds),
-                            animated: false)
+                       let duration = AudioPlayer.shared.audioPlayer?.currentItem?.duration {
+                            self.playerView.progress.setProgress(Float(value.seconds / duration.seconds),
+                                                                 animated: false)
                     }
                 }
             }
@@ -104,9 +100,8 @@ extension MediaViewController {
     }
     @objc private func add() {
         let supportedTypes: [UTType] = [UTType.audio]
-        let pickerViewController = UIDocumentPickerViewController(
-                                        forOpeningContentTypes: supportedTypes,
-                                        asCopy: true)
+        let pickerViewController = UIDocumentPickerViewController(forOpeningContentTypes: supportedTypes,
+                                                                  asCopy: true)
         pickerViewController.delegate = self
         pickerViewController.allowsMultipleSelection = true
         pickerViewController.shouldShowFileExtensions = true
@@ -125,9 +120,7 @@ extension MediaViewController: UITextFieldDelegate {
             tableView.reloadData()
         }
         let filteredSongs = AudioPlayer.shared.songs.filter {$0.title.lowercased().contains(text.lowercased())}
-        if filteredSongs.isEmpty {
-            return true
-        } else {
+        if filteredSongs.isEmpty { return true } else {
             songs = filteredSongs
             tableView.reloadData()
         }
@@ -231,7 +224,7 @@ extension MediaViewController {
         clearButton.setImage(UIImage(systemName: "x.circle"), for: .normal)
         clearButton.addTarget(self, action: #selector(clearSearchText), for: .touchUpInside)
         clearButton.tintColor = .black
-        title = "Library"
+        title = "media library"
         view.backgroundColor = .white
         navigationController?.navigationBar.prefersLargeTitles = false
         navigationItem.largeTitleDisplayMode = .always
@@ -241,7 +234,7 @@ extension MediaViewController {
         textField.autocorrectionType = .no
         textField.backgroundColor = UIColor(red: 248/255, green: 248/255, blue: 248/255, alpha: 1)
         textField.layer.cornerRadius = 10
-        textField.placeholder = "Search"
+        textField.placeholder = "search"
         textField.rightView = clearButton
         textField.rightViewMode = .always
         tableView.allowsSelection = true

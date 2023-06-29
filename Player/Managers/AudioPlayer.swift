@@ -20,8 +20,10 @@ class AudioPlayer: NSObject, UIDocumentPickerDelegate {
     @objc func playerDidFinishPlaying(_ note: NSNotification) {
         playNextSong()
     }
+    
     func playAudio(fileName: String) {
         do {
+            removeObservation()
             let fileManager = FileManager.default
             let documentsDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
             let soundFileURL = documentsDirectory.appendingPathComponent(fileName)
@@ -31,6 +33,7 @@ class AudioPlayer: NSObject, UIDocumentPickerDelegate {
             NotificationCenter.default.addObserver(self, selector: #selector(playerDidFinishPlaying(_:)), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: item)
             audioPlayer = AVPlayer(playerItem: item)
             audioPlayer?.play()
+            setupObservation()
             isPlaying = true
             setupNotificationView(song: songs[currentIndex!])
         } catch let error {
@@ -68,6 +71,7 @@ class AudioPlayer: NSObject, UIDocumentPickerDelegate {
         delegate?.changeSong(song: AudioPlayer.shared.songs[AudioPlayer.shared.currentIndex!])
         delegatePV?.songChange(song: AudioPlayer.shared.songs[AudioPlayer.shared.currentIndex!])
     }
+    
     func setupMediaPlayerNotificationView() {
         let commandCenter = MPRemoteCommandCenter.shared()
         commandCenter.playCommand.addTarget { [unowned self] event in
@@ -86,15 +90,13 @@ class AudioPlayer: NSObject, UIDocumentPickerDelegate {
             self.playPrevSong()
             return .success
         }
+        
     }
     func setupNotificationView(song: Audio) {
-        let trackTitle = song.title
-        let trackImage = song.image
-        
         var nowPlayingInfo = [String: Any]()
-        nowPlayingInfo[MPMediaItemPropertyTitle] = trackTitle
+        nowPlayingInfo[MPMediaItemPropertyTitle] = song.title
         nowPlayingInfo[MPMediaItemPropertyArtwork] = MPMediaItemArtwork(boundsSize: CGSize(width: 50, height: 50), requestHandler: { _ in
-            if let trackImage = trackImage {
+            if let trackImage = song.image {
                 return trackImage
             } else {
                 return UIImage(systemName: "music.note")!
@@ -104,57 +106,44 @@ class AudioPlayer: NSObject, UIDocumentPickerDelegate {
         nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = song.duration
         MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
     }
-//    override class func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-//        if object is AVPlayer {
-//            switch audioPlayer?.timeControlStatus {
-//            case .waitingToPlayAtSpecifiedRate, .paused:
-//                nowPlayingInf
-//            case .playing:
-//            }
-//        }
-//    }
-    /* will add later
-    func listMP3FilesInDocumentsDirectory(url: URL) -> [URL] {
-        let fileManager = FileManager.default
-        do {
-            let fileURLs = try fileManager.contentsOfDirectory(at: url, includingPropertiesForKeys: nil)
-            let mp3FileURLs = fileURLs.filter { $0.pathExtension == "mp3" }
-            return mp3FileURLs
-        } catch {
-            print("Error while enumerating files \(url.path): \(error.localizedDescription)")
-            return []
-        }
+    func updateNowPlayingInfo(song: AVPlayerItem) {
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = [
+            MPNowPlayingInfoPropertyElapsedPlaybackTime: song.currentTime(),
+            MPNowPlayingInfoPropertyPlaybackRate: 1,
+            MPMediaItemPropertyPlaybackDuration: song.duration
+        ]
     }
-    func fetchFromFiles(urls: [URL]) {
-        let fileManager = FileManager.default
-        let documentsDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        for url in urls {
-            let fileName = url.lastPathComponent
-            let destinationURL = documentsDirectory.appendingPathComponent(fileName)
-            do {
-                try fileManager.moveItem(at: url, to: destinationURL)
-                print("Файл успешно перемещен в директорию документов")
-                if fileManager.fileExists(atPath: destinationURL.path) {
-                    print("Файл существует в директории документов")
-                } else {
-                    print("Файл не существует в директории документов")
-                }
-            } catch {
-                print("Ошибка перемещения файла: \(error.localizedDescription)")
-            }
-            Task {
-                //MARK: Temporary
-                if let metadata = await getMetadataFromURL(selectedUrl: url) {
-                    let imageData = await getImageFromMetadata(metadata: metadata)
-                    let artist = await getArtistFromMetadata(metadata: metadata)
-                    let title = await getTitleFromMetadata(metadata: metadata)
-                    let duration = await getDurationFromUrl(selectedUrl: url)
-                    let fileName = url.absoluteURL.lastPathComponent
-                    let AudioFile = Audio(fileName: fileName,title: title,artist: artist, duration: duration, imageData: imageData)
-                    AudioPlayer.shared.songs.insert(AudioFile, at: AudioPlayer.shared.songs.count)
+    func setupObservation() {
+        audioPlayer?.addObserver(self, forKeyPath: "timeControlStatus", options: [.new, .old], context: nil)
+    }
+    func removeObservation() {
+        audioPlayer?.removeObserver(self, forKeyPath: "timeControlStatus")
+    }
+    
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        if keyPath == "timeControlStatus" {
+            if object is AVPlayer {
+                if let newStatus = change?[.newKey] as? Int {
+                    let newTimeControlStatus = AVPlayer.TimeControlStatus(rawValue: newStatus)
+                    handleTimeControlStatusChange(newStatus: newTimeControlStatus)
                 }
             }
         }
     }
-     */
+    func handleTimeControlStatusChange(newStatus: AVPlayer.TimeControlStatus?) {
+        if let newStatus = newStatus {
+            var nowPlayingInfo = MPNowPlayingInfoCenter.default().nowPlayingInfo ?? [:]
+            switch newStatus {
+            case .playing:
+                nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = 1
+                nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = audioPlayer!.currentTime().seconds
+            case .waitingToPlayAtSpecifiedRate, .paused:
+                nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = 0
+                nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = audioPlayer!.currentTime().seconds
+            @unknown default:
+                fatalError("Неизвестный статус воспроизведения")
+            }
+            MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
+        }
+    }
 }
