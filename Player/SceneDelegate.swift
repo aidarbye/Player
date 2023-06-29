@@ -16,8 +16,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                                                        image: UIImage(systemName: "music.note.list"),
                                                        tag: 0)
         let emptyViewController = UINavigationController(rootViewController: EmptyViewController())
-        emptyViewController.tabBarItem = UITabBarItem(title: "EMPTY",
-                                                       image: UIImage(systemName: "play"),
+        emptyViewController.tabBarItem = UITabBarItem(title: "soundcloud",
+                                                       image: UIImage(systemName: "cloud.fill"),
                                                        tag: 1)
         let tabBarController = UITabBarController()
         tabBarController.tabBar.backgroundColor = UIColor(red: 228/255, green: 228/255, blue: 228/255, alpha: 1)

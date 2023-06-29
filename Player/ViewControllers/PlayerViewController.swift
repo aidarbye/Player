@@ -9,7 +9,8 @@ protocol PlayerViewControllerDelegate {
 class PlayerViewController: UIViewController {
     let imageView = UIImageView()
     let slider = UISlider()
-    let label = UILabel()
+    let titleLabel = UILabel()
+    let artistLabel = UILabel()
     
     var delegate: PlayerViewControllerDelegate?
     var timer: Timer?
@@ -20,7 +21,8 @@ class PlayerViewController: UIViewController {
         guard let index = AudioPlayer.shared.currentIndex else { return }
         self.imageView.image = AudioPlayer.shared.songs[index].image
         self.slider.maximumValue = AudioPlayer.shared.songs[index].duration
-        self.label.text = AudioPlayer.shared.songs[index].title
+        self.titleLabel.text = AudioPlayer.shared.songs[index].title
+        self.artistLabel.text = AudioPlayer.shared.songs[index].artist
     }
     override func viewWillAppear(_ animated: Bool) {
         if let value = AudioPlayer.shared.audioPlayer?.currentTime() {
@@ -81,13 +83,15 @@ extension PlayerViewController: PlayerViewControllerDelegate {
     func changeSong(song: Audio) {
         self.imageView.image = song.image
         self.slider.maximumValue = AudioPlayer.shared.songs[AudioPlayer.shared.currentIndex!].duration
-        self.label.text = song.title
+        self.titleLabel.text = song.title
+        self.artistLabel.text = song.artist
     }
 }
 
 // MARK: UI
 extension PlayerViewController {
     private func setupView() {
+        overrideUserInterfaceStyle = .light
         let ShuffleButton = UIButton(type: .system)
         let PlayPauseButton = UIButton(type: .system)
         let NextMusicButton = UIButton(type: .system)
@@ -95,10 +99,13 @@ extension PlayerViewController {
         let Repeat = UIButton(type: .system)
         imageView.tintColor = .black
         imageView.clipsToBounds = true
-        label.textAlignment = .center
-        label.text = "Nothing there buddy"
-        label.numberOfLines = 2
-        label.font = .boldSystemFont(ofSize: 20)
+        titleLabel.textAlignment = .center
+        titleLabel.text = "Nothing there buddy"
+        titleLabel.numberOfLines = 2
+        titleLabel.font = .boldSystemFont(ofSize: 20)
+        artistLabel.textAlignment = .center
+        artistLabel.text = "and there too"
+        artistLabel.font = .systemFont(ofSize: 15)
         slider.tintColor = .black
         slider.thumbTintColor = .black
         view.backgroundColor = .white
@@ -108,8 +115,9 @@ extension PlayerViewController {
         view.addSubview(ShuffleButton)
         view.addSubview(slider)
         view.addSubview(Repeat)
-        view.addSubview(label)
+        view.addSubview(titleLabel)
         view.addSubview(imageView)
+        view.addSubview(artistLabel)
         
         PlayPauseButton.setImage(UIImage(systemName: "playpause"), for: .normal)
         PlayPauseButton.addTarget(self, action: #selector(playStop), for: .touchUpInside)
@@ -167,9 +175,15 @@ extension PlayerViewController {
             make.centerX.equalToSuperview()
             make.bottom.equalTo(PlayPauseButton.snp.top).offset(-30)
         }
-        label.snp.makeConstraints { make in
+        titleLabel.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.bottom.equalTo(slider.snp.top).offset(-60)
+            make.left.equalTo(view.snp.left).offset(10)
+            make.right.equalTo(view.snp.right).offset(-10)
+        }
+        artistLabel.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.top.equalTo(titleLabel.snp.bottom).offset(20)
             make.left.equalTo(view.snp.left).offset(10)
             make.right.equalTo(view.snp.right).offset(-10)
         }

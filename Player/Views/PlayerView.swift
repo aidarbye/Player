@@ -37,6 +37,7 @@ extension PlayerView: PlayerViewSongControllerProtocol {
 // MARK: UI
 extension PlayerView {
     func setupView() {
+        overrideUserInterfaceStyle = .light
         backgroundColor = UIColor(red: 228/255, green: 228/255, blue: 228/255, alpha: 0.8)
         addSubview(label)
         addSubview(progress)
@@ -54,7 +55,7 @@ extension PlayerView {
         progress.snp.makeConstraints { make in
             make.top.equalTo(snp.top)
             make.width.equalToSuperview()
-            make.height.equalTo(5)
+            make.height.equalTo(3)
         }
         label.snp.makeConstraints { make in
             make.top.equalTo(progress.snp.bottom).offset(10)

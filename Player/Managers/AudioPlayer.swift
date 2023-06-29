@@ -2,7 +2,7 @@ import Foundation
 import MediaPlayer
 import UIKit
 
-// MARK: Pause bug, Seek from remote control, Storage, get all music in files when app loaded
+// MARK: Storage, get all music in files when app loaded
 class AudioPlayer: NSObject, UIDocumentPickerDelegate {
     static let shared = AudioPlayer()
     var audioPlayer: AVPlayer?

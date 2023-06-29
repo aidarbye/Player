@@ -2,7 +2,14 @@ import UIKit
 import SnapKit
 import UniformTypeIdentifiers
 import AVKit
-
+/*
+ Storage
+ Repeat & Shuffle buttons
+ Make UI look better(animation etc)
+ Is there any way to load automatically?
+ Editing(is it should be in storage?)
+ Optimize some process(like, its should be optional rght?)
+*/
 class MediaViewController: UIViewController {
     var songs: [Audio] = []
     let tableView = UITableView()
@@ -218,13 +225,14 @@ func getDurationFromUrl(selectedUrl: URL) async -> Float {
 // MARK: UI
 extension MediaViewController {
     func setupView() {
+        overrideUserInterfaceStyle = .light
         let addButton = UIBarButtonItem(barButtonSystemItem: .add,target: self,action: #selector(add))
         addButton.tintColor = .black
         let clearButton = UIButton(type: .custom)
         clearButton.setImage(UIImage(systemName: "x.circle"), for: .normal)
         clearButton.addTarget(self, action: #selector(clearSearchText), for: .touchUpInside)
         clearButton.tintColor = .black
-        title = "media library"
+        title = "media"
         view.backgroundColor = .white
         navigationController?.navigationBar.prefersLargeTitles = false
         navigationItem.largeTitleDisplayMode = .always
@@ -234,7 +242,7 @@ extension MediaViewController {
         textField.autocorrectionType = .no
         textField.backgroundColor = UIColor(red: 248/255, green: 248/255, blue: 248/255, alpha: 1)
         textField.layer.cornerRadius = 10
-        textField.placeholder = "search"
+        textField.placeholder = " search"
         textField.rightView = clearButton
         textField.rightViewMode = .always
         tableView.allowsSelection = true
@@ -250,8 +258,8 @@ extension MediaViewController {
         view.addSubview(textField)
         view.addSubview(playerView)
         textField.snp.makeConstraints { make in
-            make.leading.equalToSuperview().offset(10)
-            make.trailing.equalToSuperview().offset(-10)
+            make.leading.equalToSuperview().offset(20)
+            make.trailing.equalToSuperview().offset(-20)
             make.height.equalTo(40)
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
         }
