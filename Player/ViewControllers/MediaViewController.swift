@@ -3,12 +3,15 @@ import SnapKit
 import UniformTypeIdentifiers
 import AVKit
 /*
- Storage
- Repeat & Shuffle buttons
+ Storage - ✅
+ Repeat & Shuffle buttons functions
+ Constraints after tap on pause, PlayerView, PlayerViewController pause/play
+ RedSelect playing sound
  Make UI look better(animation etc)
  Is there any way to load automatically?
- Editing(is it should be in storage?)
+ Editing(is it should be in storage?, it will be lol)
  Optimize some process(like, its should be optional rght?)
+ Timer
 */
 class MediaViewController: UIViewController {
     var songs: [Audio] = []
@@ -19,11 +22,17 @@ class MediaViewController: UIViewController {
     var timer: Timer?
     
     override func viewDidLoad() {
+        songs = AudioPlayer.shared.songs
         PlayerVC = PlayerViewController()
         setupView()
     }
     override func viewWillAppear(_ animated: Bool) {
-        print("apperaince")
+        print("apperainceMEDIA")
+        if AudioPlayer.shared.isPlaying {
+            playerView.playPauseButton.setImage(UIImage(systemName: "pause.fill"), for: .normal)
+        } else {
+            playerView.playPauseButton.setImage(UIImage(systemName: "play.fill"), for: .normal)
+        }
         if let value = AudioPlayer.shared.audioPlayer?.currentTime(),
            let duration = AudioPlayer.shared.audioPlayer?.currentItem?.duration {
                 self.playerView.progress.setProgress(Float(value.seconds / duration.seconds),
@@ -42,7 +51,7 @@ class MediaViewController: UIViewController {
         }
     }
     override func viewWillDisappear(_ animated: Bool) {
-        print("disapear")
+        print("disapearMEDIA")
         timer?.invalidate()
         timer = nil
     }
@@ -79,6 +88,7 @@ extension MediaViewController: UITableViewDelegate, UITableViewDataSource {
         AudioPlayer.shared.playAudio(fileName: songs[indexPath.row].fileName)
         AudioPlayer.shared.delegate?.changeSong(song: songs[indexPath.row])
         AudioPlayer.shared.delegatePV?.songChange(song: songs[indexPath.row])
+        playerView.playPauseButton.setImage(UIImage(systemName: "pause.fill"), for: .normal)
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = MusicTableViewCell(style: .default, reuseIdentifier: "MusicCell")
@@ -93,11 +103,13 @@ extension MediaViewController {
     @objc private func swipeGesture(_ gestureRecognizer: UISwipeGestureRecognizer) {
         if gestureRecognizer.state == .ended {
             guard let pvc = PlayerVC else {return}
+            pvc.modalPresentationStyle = .fullScreen
             present(pvc, animated: true)
         }
     }
     @objc private func tapGesture() {
         guard let pvc = PlayerVC else { return }
+        pvc.modalPresentationStyle = .fullScreen
         present(pvc, animated: true)
     }
     @objc private func clearSearchText() {
@@ -143,12 +155,7 @@ extension MediaViewController: UIDocumentPickerDelegate {
         for url in urls {
             let fileName = url.lastPathComponent
             let destinationURL = documentsDirectory.appendingPathComponent(fileName)
-            do {
-                try fileManager.moveItem(at: url, to: destinationURL)
-                print("Файл успешно перемещен в директорию документов")
-            } catch {
-                print("Ошибка перемещения файла: \(error.localizedDescription)")
-            }
+            do { try fileManager.moveItem(at: url, to: destinationURL) } catch {  }
             Task {
                 if let metadata = await getMetadataFromURL(selectedUrl: destinationURL) {
                     let imageData = await getImageFromMetadata(metadata: metadata)
@@ -157,9 +164,11 @@ extension MediaViewController: UIDocumentPickerDelegate {
                     let duration = await getDurationFromUrl(selectedUrl: url)
                     let fileName = url.absoluteURL.lastPathComponent
                     let AudioFile = Audio(fileName: fileName,title: title,artist: artist, duration: duration, imageData: imageData)
-                    AudioPlayer.shared.songs.insert(AudioFile, at: AudioPlayer.shared.songs.count)
-                    songs.insert(AudioFile, at: songs.count)
-                    tableView.insertRows(at: [IndexPath(row: songs.count - 1, section: 0)], with: .automatic)
+                    if !AudioPlayer.shared.songs.contains(AudioFile) {
+                        AudioPlayer.shared.songs.insert(AudioFile, at: AudioPlayer.shared.songs.count)
+                        songs.insert(AudioFile, at: songs.count)
+                        tableView.insertRows(at: [IndexPath(row: songs.count - 1, section: 0)], with: .automatic)
+                    }
                 }
             }
         }

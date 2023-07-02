@@ -2,7 +2,6 @@ import Foundation
 import MediaPlayer
 import UIKit
 
-// MARK: Storage, get all music in files when app loaded
 class AudioPlayer: NSObject, UIDocumentPickerDelegate {
     static let shared = AudioPlayer()
     var audioPlayer: AVPlayer?
@@ -15,6 +14,7 @@ class AudioPlayer: NSObject, UIDocumentPickerDelegate {
     
     override init() {
         super.init()
+        songs = StorageManager.shared.fetchData()
         setupMediaPlayerNotificationView()
     }
     @objc func playerDidFinishPlaying(_ note: NSNotification) {
@@ -51,6 +51,19 @@ class AudioPlayer: NSObject, UIDocumentPickerDelegate {
     
     func playNextSong() {
         guard audioPlayer != nil || songs.isEmpty else { return }
+        
+//        switch SettingsManager.shared.settings.repeating {
+//        case .oneSong:
+//            self.currentIndex? += 0
+//        default: break
+//        }
+//
+//        switch SettingsManager.shared.settings.shuffle {
+//        case .on:
+//            self.currentIndex? = Int.random(in: 0..<self.songs.count)
+//        default: break
+//        }
+        
         if AudioPlayer.shared.currentIndex == AudioPlayer.shared.songs.count - 1 {
             AudioPlayer.shared.currentIndex = 0
         } else {

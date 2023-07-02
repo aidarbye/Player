@@ -24,6 +24,11 @@ class PlayerView: UIView {
     
     @objc private func playPause() {
         AudioPlayer.shared.playPause()
+        if AudioPlayer.shared.isPlaying {
+            playPauseButton.setImage(UIImage(systemName: "pause.fill"), for: .normal)
+        } else {
+            playPauseButton.setImage(UIImage(systemName: "play.fill"), for: .normal)
+        }
     }
 }
 

@@ -8,8 +8,5 @@ struct Audio: Codable, Equatable {
     var artist: String
     var duration: Float
     var imageData: Data
-    
-    var image: UIImage? {
-        return UIImage(data: imageData)
-    }
+    var image: UIImage? { return UIImage(data: imageData) }
 }
