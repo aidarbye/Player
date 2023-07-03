@@ -78,8 +78,8 @@
             filePath = "Player/ViewControllers/MediaViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "26"
-            endingLineNumber = "26"
+            startingLineNumber = "25"
+            endingLineNumber = "25"
             landmarkName = "viewDidLoad()"
             landmarkType = "7">
          </BreakpointContent>
@@ -222,8 +222,8 @@
             filePath = "Player/ViewControllers/MediaViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "161"
-            endingLineNumber = "161"
+            startingLineNumber = "195"
+            endingLineNumber = "195"
             landmarkName = "documentPicker(_:didPickDocumentsAt:)"
             landmarkType = "7">
             <Locations>
@@ -316,8 +316,8 @@
             filePath = "Player/ViewControllers/MediaViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "107"
-            endingLineNumber = "107"
+            startingLineNumber = "128"
+            endingLineNumber = "128"
             landmarkName = "swipeGesture(_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -332,8 +332,8 @@
             filePath = "Player/ViewControllers/MediaViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "113"
-            endingLineNumber = "113"
+            startingLineNumber = "134"
+            endingLineNumber = "134"
             landmarkName = "tapGesture()"
             landmarkType = "7">
          </BreakpointContent>
@@ -364,8 +364,8 @@
             filePath = "Player/ViewControllers/PlayerViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "127"
-            endingLineNumber = "127"
+            startingLineNumber = "128"
+            endingLineNumber = "128"
             landmarkName = "setupView()"
             landmarkType = "7">
          </BreakpointContent>
@@ -383,6 +383,22 @@
             startingLineNumber = "44"
             endingLineNumber = "44"
             landmarkName = "setupView()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "FE4967AC-E9E7-4DD9-8E2F-BDA026C8626F"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Player/ViewControllers/MediaViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "75"
+            endingLineNumber = "75"
+            landmarkName = "tableView(_:commit:forRowAt:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

@@ -11,6 +11,7 @@ class APManager: NSObject, UIDocumentPickerDelegate {
     
     var delegate: PlayerViewControllerDelegate?
     var delegatePV: PlayerViewSongControllerProtocol?
+    var delegateMVC: MediaViewControllerDelegate?
     
     override init() {
         super.init()
@@ -24,8 +25,7 @@ class APManager: NSObject, UIDocumentPickerDelegate {
     func playAudio(fileName: String) {
         do {
             removeObservation()
-            let fileManager = FileManager.default
-            let documentsDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
+            let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
             let soundFileURL = documentsDirectory.appendingPathComponent(fileName)
             try AVAudioSession.sharedInstance().setCategory(.playback)
             try AVAudioSession.sharedInstance().setActive(true)
@@ -36,9 +36,7 @@ class APManager: NSObject, UIDocumentPickerDelegate {
             setupObservation()
             isPlaying = true
             setupNotificationView(song: songs[currentIndex!])
-        } catch let error {
-            print(error)
-        }
+        } catch let error { print(error) }
     }
     func playPause() {
         guard currentIndex != nil else { return }
@@ -82,6 +80,7 @@ class APManager: NSObject, UIDocumentPickerDelegate {
         APManager.shared.playAudio(fileName:APManager.shared.songs[APManager.shared.currentIndex!].fileName)
         delegate?.changeSong(song: APManager.shared.songs[APManager.shared.currentIndex!])
         delegatePV?.songChange(song: APManager.shared.songs[APManager.shared.currentIndex!])
+        delegateMVC?.changeREDselect()
     }
     func playPrevSong() {
         guard audioPlayer != nil || songs.isEmpty else { return }
@@ -97,6 +96,7 @@ class APManager: NSObject, UIDocumentPickerDelegate {
         APManager.shared.playAudio(fileName:APManager.shared.songs[APManager.shared.currentIndex!].fileName)
         delegate?.changeSong(song: APManager.shared.songs[APManager.shared.currentIndex!])
         delegatePV?.songChange(song: APManager.shared.songs[APManager.shared.currentIndex!])
+        delegateMVC?.changeREDselect()
     }
     
     func setupMediaPlayerNotificationView() {

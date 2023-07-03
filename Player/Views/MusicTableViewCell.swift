@@ -1,11 +1,6 @@
 import UIKit
 
 class MusicTableViewCell: UITableViewCell {
-    var isPlaying: Bool = false {
-        didSet {
-            updateCellAppearance() // <- ???
-        }
-    }
     let titleLabel = UILabel()
     let image = UIImageView(image: UIImage(systemName: "music.note"))
     
@@ -33,13 +28,4 @@ class MusicTableViewCell: UITableViewCell {
             make.right.equalTo(contentView.snp_rightMargin).offset(20)
         }
     }
-    private func updateCellAppearance() {
-            if isPlaying  {
-                contentView.layer.borderWidth = 2.0
-                contentView.layer.borderColor = UIColor.red.cgColor
-            } else {
-                contentView.layer.borderWidth = 0.0
-                contentView.layer.borderColor = UIColor.clear.cgColor
-            }
-        }
 }

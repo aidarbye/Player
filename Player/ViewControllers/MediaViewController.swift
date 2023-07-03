@@ -3,18 +3,17 @@ import SnapKit
 import UniformTypeIdentifiers
 import AVKit
 /*
- Storage - ✅
- Repeat & Shuffle buttons functions - ✅
- Constraints after tap on pause, PlayerView, PlayerViewController pause/play - ✅
- RedSelect playing sound
- Pause Bug after sliding value
- Make UI look better(animation etc)
- Is there any way to load automatically?
- Editing(is it should be in storage?, it will be lol)
+ After song searched, play only this songs, should put in another view?
  Optimize some process(like, its should be optional rght?)
- Timer
+ Timer? left bar button item
+ UI!
 */
-class MediaViewController: UIViewController {
+
+protocol MediaViewControllerDelegate {
+    func changeREDselect()
+}
+
+class MediaViewController: UIViewController, MediaViewControllerDelegate {
     let buttonSize = CGSize(width: 20, height: 20)
     var songs: [Audio] = []
     let tableView = UITableView()
@@ -27,6 +26,7 @@ class MediaViewController: UIViewController {
         songs = APManager.shared.songs
         PlayerVC = PlayerViewController()
         PlayerVC?.modalPresentationStyle = .fullScreen
+        APManager.shared.delegateMVC = self
         setupView()
     }
     override func viewWillAppear(_ animated: Bool) {
@@ -92,12 +92,33 @@ extension MediaViewController: UITableViewDelegate, UITableViewDataSource {
         APManager.shared.delegate?.changeSong(song: songs[indexPath.row])
         APManager.shared.delegatePV?.songChange(song: songs[indexPath.row])
         playerView.playPauseButton.setImage(UIImage(systemName: "pause.fill")?.resized(to: buttonSize), for: .normal)
+        tableView.reloadData()
+    }
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        guard let index = APManager.shared.currentIndex else { return }
+        if index == indexPath.row {
+            cell.contentView.layer.borderColor = UIColor.red.cgColor
+            cell.contentView.layer.borderWidth = 2
+        } else {
+            cell.contentView.layer.borderColor = UIColor.white.cgColor
+            cell.contentView.layer.borderWidth = 0
+        }
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = MusicTableViewCell(style: .default, reuseIdentifier: "MusicCell")
         cell.titleLabel.text = songs[indexPath.row].title
         cell.image.image = songs[indexPath.row].image
         return cell
+    }
+    func changeREDselect() {
+        tableView.reloadData()
+    }
+    func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+        songs.swapAt(sourceIndexPath.row, destinationIndexPath.row)
+        APManager.shared.songs.swapAt(sourceIndexPath.row, destinationIndexPath.row)
+        if APManager.shared.isPlaying {
+            APManager.shared.currentIndex? = destinationIndexPath.row
+        }
     }
 }
 
@@ -127,6 +148,19 @@ extension MediaViewController {
         pickerViewController.shouldShowFileExtensions = true
         
         self.present(pickerViewController, animated: true, completion: nil)
+    }
+    @objc private func edit() {
+        tableView.setEditing(!tableView.isEditing, animated: true)
+        if tableView.isEditing {
+            let button = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(edit))
+            button.tintColor = .black
+            navigationItem.rightBarButtonItems![1] = button
+        }
+        else {
+            let button = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(edit))
+            button.tintColor = .black
+            navigationItem.rightBarButtonItems![1] = button
+        }
     }
 }
 
@@ -238,15 +272,17 @@ extension MediaViewController {
         overrideUserInterfaceStyle = .light
         let addButton = UIBarButtonItem(barButtonSystemItem: .add,target: self,action: #selector(add))
         addButton.tintColor = .black
+        let editButton = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(edit))
+        editButton.tintColor = .black
         let clearButton = UIButton(type: .custom)
-        clearButton.setImage(UIImage(systemName: "x.circle.fill"), for: .normal)
+        clearButton.setImage(UIImage(systemName: "x.circle"), for: .normal)
         clearButton.tintColor = .red
         clearButton.addTarget(self, action: #selector(clearSearchText), for: .touchUpInside)
         title = "media"
         view.backgroundColor = .white
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.largeTitleDisplayMode = .always
-        navigationItem.rightBarButtonItem = addButton
+        navigationItem.rightBarButtonItems = [addButton,editButton]
         textField.delegate = self
         textField.autocapitalizationType = .none
         textField.autocorrectionType = .no

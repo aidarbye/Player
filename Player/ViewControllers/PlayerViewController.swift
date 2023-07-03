@@ -87,6 +87,7 @@ extension PlayerViewController {
     @objc func scrubAudio() {
         if let audioPlayer = APManager.shared.audioPlayer {
             APManager.shared.isPlaying = true
+            PlayPauseButton.setImage(UIImage(systemName: "pause.fill")?.resized(to: buttonSize), for: .normal)
             audioPlayer.seek(to: CMTime(seconds: Double(slider.value), preferredTimescale: 1),
                              toleranceBefore: .zero, toleranceAfter: .zero)
             audioPlayer.play()
@@ -190,7 +191,6 @@ extension PlayerViewController {
         PlayPauseButton.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-60)
-//            make.width.height.equalTo(40)
         }
         NextMusicButton.snp.makeConstraints { make in
             make.centerY.equalTo(PlayPauseButton.snp.centerY)
