@@ -19,9 +19,10 @@
 		B490B7842A31C3CD004F6F15 /* PlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B490B7832A31C3CD004F6F15 /* PlayerViewController.swift */; };
 		B490B7862A31DEBF004F6F15 /* MusicTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B490B7852A31DEBF004F6F15 /* MusicTableViewCell.swift */; };
 		B490B7882A325EE0004F6F15 /* Audio.swift in Sources */ = {isa = PBXBuildFile; fileRef = B490B7872A325EE0004F6F15 /* Audio.swift */; };
-		B490B78A2A325EFF004F6F15 /* AudioPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B490B7892A325EFF004F6F15 /* AudioPlayer.swift */; };
+		B490B78A2A325EFF004F6F15 /* APManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B490B7892A325EFF004F6F15 /* APManager.swift */; };
 		B4F506D92A52084000EBCC97 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4F506D82A52084000EBCC97 /* Settings.swift */; };
 		B4F506DB2A520B8C00EBCC97 /* SettingsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4F506DA2A520B8C00EBCC97 /* SettingsManager.swift */; };
+		B4F506DD2A52BC3C00EBCC97 /* Extension+Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4F506DC2A52BC3C00EBCC97 /* Extension+Image.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -38,9 +39,10 @@
 		B490B7832A31C3CD004F6F15 /* PlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerViewController.swift; sourceTree = "<group>"; };
 		B490B7852A31DEBF004F6F15 /* MusicTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicTableViewCell.swift; sourceTree = "<group>"; };
 		B490B7872A325EE0004F6F15 /* Audio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Audio.swift; sourceTree = "<group>"; };
-		B490B7892A325EFF004F6F15 /* AudioPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayer.swift; sourceTree = "<group>"; };
+		B490B7892A325EFF004F6F15 /* APManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APManager.swift; sourceTree = "<group>"; };
 		B4F506D82A52084000EBCC97 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		B4F506DA2A520B8C00EBCC97 /* SettingsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsManager.swift; sourceTree = "<group>"; };
+		B4F506DC2A52BC3C00EBCC97 /* Extension+Image.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extension+Image.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,6 +82,7 @@
 				B490B78F2A32693B004F6F15 /* Views */,
 				B490B78D2A32691F004F6F15 /* Models */,
 				B490B78E2A32692B004F6F15 /* Managers */,
+				B4F506DC2A52BC3C00EBCC97 /* Extension+Image.swift */,
 				B4402C0B2A31BEB500B1CC46 /* Assets.xcassets */,
 				B4402C102A31BEB500B1CC46 /* Info.plist */,
 				B4402C0D2A31BEB500B1CC46 /* LaunchScreen.storyboard */,
@@ -100,7 +103,7 @@
 			isa = PBXGroup;
 			children = (
 				B42535E72A483DDC0087A64F /* StorageManager.swift */,
-				B490B7892A325EFF004F6F15 /* AudioPlayer.swift */,
+				B490B7892A325EFF004F6F15 /* APManager.swift */,
 				B4F506DA2A520B8C00EBCC97 /* SettingsManager.swift */,
 			);
 			path = Managers;
@@ -210,9 +213,10 @@
 				B4402C032A31BEB300B1CC46 /* AppDelegate.swift in Sources */,
 				B4402C052A31BEB300B1CC46 /* SceneDelegate.swift in Sources */,
 				B4F506DB2A520B8C00EBCC97 /* SettingsManager.swift in Sources */,
-				B490B78A2A325EFF004F6F15 /* AudioPlayer.swift in Sources */,
+				B490B78A2A325EFF004F6F15 /* APManager.swift in Sources */,
 				B4F506D92A52084000EBCC97 /* Settings.swift in Sources */,
 				B42535E82A483DDC0087A64F /* StorageManager.swift in Sources */,
+				B4F506DD2A52BC3C00EBCC97 /* Extension+Image.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

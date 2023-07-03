@@ -28,7 +28,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     
     func sceneDidDisconnect(_ scene: UIScene) {
-        StorageManager.shared.save(songs: AudioPlayer.shared.songs)
+        StorageManager.shared.save(songs: APManager.shared.songs)
         StorageManager.shared.saveSettings(settings: SettingsManager.shared.settings)
         // Called as the scene is being released by the system.
         // This occurs shortly after the scene enters the background, or when its session is discarded.

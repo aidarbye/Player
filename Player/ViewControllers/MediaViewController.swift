@@ -4,9 +4,10 @@ import UniformTypeIdentifiers
 import AVKit
 /*
  Storage - ✅
- Repeat & Shuffle buttons functions
- Constraints after tap on pause, PlayerView, PlayerViewController pause/play
+ Repeat & Shuffle buttons functions - ✅
+ Constraints after tap on pause, PlayerView, PlayerViewController pause/play - ✅
  RedSelect playing sound
+ Pause Bug after sliding value
  Make UI look better(animation etc)
  Is there any way to load automatically?
  Editing(is it should be in storage?, it will be lol)
@@ -14,6 +15,7 @@ import AVKit
  Timer
 */
 class MediaViewController: UIViewController {
+    let buttonSize = CGSize(width: 20, height: 20)
     var songs: [Audio] = []
     let tableView = UITableView()
     let textField = UITextField()
@@ -22,27 +24,28 @@ class MediaViewController: UIViewController {
     var timer: Timer?
     
     override func viewDidLoad() {
-        songs = AudioPlayer.shared.songs
+        songs = APManager.shared.songs
         PlayerVC = PlayerViewController()
+        PlayerVC?.modalPresentationStyle = .fullScreen
         setupView()
     }
     override func viewWillAppear(_ animated: Bool) {
         print("apperainceMEDIA")
-        if AudioPlayer.shared.isPlaying {
-            playerView.playPauseButton.setImage(UIImage(systemName: "pause.fill"), for: .normal)
+        if APManager.shared.isPlaying {
+            playerView.playPauseButton.setImage(UIImage(systemName: "pause.fill")?.resized(to: buttonSize), for: .normal)
         } else {
-            playerView.playPauseButton.setImage(UIImage(systemName: "play.fill"), for: .normal)
+            playerView.playPauseButton.setImage(UIImage(systemName: "play.fill")?.resized(to: buttonSize), for: .normal)
         }
-        if let value = AudioPlayer.shared.audioPlayer?.currentTime(),
-           let duration = AudioPlayer.shared.audioPlayer?.currentItem?.duration {
+        if let value = APManager.shared.audioPlayer?.currentTime(),
+           let duration = APManager.shared.audioPlayer?.currentItem?.duration {
                 self.playerView.progress.setProgress(Float(value.seconds / duration.seconds),
                                                      animated: false)
         }
         if timer == nil {
             self.timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { (_) in
-                if AudioPlayer.shared.isPlaying {
-                    if let value = AudioPlayer.shared.audioPlayer?.currentTime(),
-                       let duration = AudioPlayer.shared.audioPlayer?.currentItem?.duration {
+                if APManager.shared.isPlaying {
+                    if let value = APManager.shared.audioPlayer?.currentTime(),
+                       let duration = APManager.shared.audioPlayer?.currentItem?.duration {
                             self.playerView.progress.setProgress(Float(value.seconds / duration.seconds),
                                                                  animated: false)
                     }
@@ -70,25 +73,25 @@ extension MediaViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             var index = 0
-            for i in AudioPlayer.shared.songs.indices {
-                if AudioPlayer.shared.songs[i] == songs[indexPath.row] {
+            for i in APManager.shared.songs.indices {
+                if APManager.shared.songs[i] == songs[indexPath.row] {
                     index = i
                     break
                 }
             }
             
-            AudioPlayer.shared.songs.remove(at: index)
+            APManager.shared.songs.remove(at: index)
             songs.remove(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .automatic)
         }
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        AudioPlayer.shared.currentIndex = indexPath.row
-        AudioPlayer.shared.playAudio(fileName: songs[indexPath.row].fileName)
-        AudioPlayer.shared.delegate?.changeSong(song: songs[indexPath.row])
-        AudioPlayer.shared.delegatePV?.songChange(song: songs[indexPath.row])
-        playerView.playPauseButton.setImage(UIImage(systemName: "pause.fill"), for: .normal)
+        APManager.shared.currentIndex = indexPath.row
+        APManager.shared.playAudio(fileName: songs[indexPath.row].fileName)
+        APManager.shared.delegate?.changeSong(song: songs[indexPath.row])
+        APManager.shared.delegatePV?.songChange(song: songs[indexPath.row])
+        playerView.playPauseButton.setImage(UIImage(systemName: "pause.fill")?.resized(to: buttonSize), for: .normal)
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = MusicTableViewCell(style: .default, reuseIdentifier: "MusicCell")
@@ -103,18 +106,16 @@ extension MediaViewController {
     @objc private func swipeGesture(_ gestureRecognizer: UISwipeGestureRecognizer) {
         if gestureRecognizer.state == .ended {
             guard let pvc = PlayerVC else {return}
-            pvc.modalPresentationStyle = .fullScreen
             present(pvc, animated: true)
         }
     }
     @objc private func tapGesture() {
         guard let pvc = PlayerVC else { return }
-        pvc.modalPresentationStyle = .fullScreen
         present(pvc, animated: true)
     }
     @objc private func clearSearchText() {
         textField.text = ""
-        songs = AudioPlayer.shared.songs
+        songs = APManager.shared.songs
         tableView.reloadData()
     }
     @objc private func add() {
@@ -135,10 +136,10 @@ extension MediaViewController: UITextFieldDelegate {
         textField.resignFirstResponder()
         guard let text = textField.text else { return true }
         if text.isEmpty {
-            songs = AudioPlayer.shared.songs
+            songs = APManager.shared.songs
             tableView.reloadData()
         }
-        let filteredSongs = AudioPlayer.shared.songs.filter {$0.title.lowercased().contains(text.lowercased())}
+        let filteredSongs = APManager.shared.songs.filter {$0.title.lowercased().contains(text.lowercased())}
         if filteredSongs.isEmpty { return true } else {
             songs = filteredSongs
             tableView.reloadData()
@@ -164,8 +165,8 @@ extension MediaViewController: UIDocumentPickerDelegate {
                     let duration = await getDurationFromUrl(selectedUrl: url)
                     let fileName = url.absoluteURL.lastPathComponent
                     let AudioFile = Audio(fileName: fileName,title: title,artist: artist, duration: duration, imageData: imageData)
-                    if !AudioPlayer.shared.songs.contains(AudioFile) {
-                        AudioPlayer.shared.songs.insert(AudioFile, at: AudioPlayer.shared.songs.count)
+                    if !APManager.shared.songs.contains(AudioFile) {
+                        APManager.shared.songs.insert(AudioFile, at: APManager.shared.songs.count)
                         songs.insert(AudioFile, at: songs.count)
                         tableView.insertRows(at: [IndexPath(row: songs.count - 1, section: 0)], with: .automatic)
                     }
@@ -238,12 +239,12 @@ extension MediaViewController {
         let addButton = UIBarButtonItem(barButtonSystemItem: .add,target: self,action: #selector(add))
         addButton.tintColor = .black
         let clearButton = UIButton(type: .custom)
-        clearButton.setImage(UIImage(systemName: "x.circle"), for: .normal)
+        clearButton.setImage(UIImage(systemName: "x.circle.fill"), for: .normal)
+        clearButton.tintColor = .red
         clearButton.addTarget(self, action: #selector(clearSearchText), for: .touchUpInside)
-        clearButton.tintColor = .black
         title = "media"
         view.backgroundColor = .white
-        navigationController?.navigationBar.prefersLargeTitles = false
+        navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.largeTitleDisplayMode = .always
         navigationItem.rightBarButtonItem = addButton
         textField.delegate = self
@@ -267,8 +268,8 @@ extension MediaViewController {
         view.addSubview(textField)
         view.addSubview(playerView)
         textField.snp.makeConstraints { make in
-            make.leading.equalToSuperview().offset(20)
-            make.trailing.equalToSuperview().offset(-20)
+            make.leading.equalToSuperview().offset(10)
+            make.trailing.equalToSuperview().offset(-10)
             make.height.equalTo(40)
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
         }

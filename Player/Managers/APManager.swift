@@ -2,8 +2,8 @@ import Foundation
 import MediaPlayer
 import UIKit
 
-class AudioPlayer: NSObject, UIDocumentPickerDelegate {
-    static let shared = AudioPlayer()
+class APManager: NSObject, UIDocumentPickerDelegate {
+    static let shared = APManager()
     var audioPlayer: AVPlayer?
     var currentIndex: Int?
     var isPlaying: Bool = false
@@ -48,41 +48,55 @@ class AudioPlayer: NSObject, UIDocumentPickerDelegate {
         
         isPlaying.toggle()
     }
-    
+    func getShuffledIndex() {
+        self.currentIndex? = Int.random(in: 0..<self.songs.count)
+    }
+    func getRepeatingIndex() {
+        self.currentIndex? += 0
+    }
+    func getDefaultNextIndex() {
+        if APManager.shared.currentIndex == APManager.shared.songs.count - 1 {
+            APManager.shared.currentIndex = 0
+        } else {
+            APManager.shared.currentIndex? += 1
+        }
+    }
+    func getDefaultPrevIndex() {
+        if APManager.shared.currentIndex == 0 {
+            APManager.shared.currentIndex = APManager.shared.songs.count - 1
+        } else {
+            APManager.shared.currentIndex? -= 1
+        }
+    }
     func playNextSong() {
         guard audioPlayer != nil || songs.isEmpty else { return }
         
-//        switch SettingsManager.shared.settings.repeating {
-//        case .oneSong:
-//            self.currentIndex? += 0
-//        default: break
-//        }
-//
-//        switch SettingsManager.shared.settings.shuffle {
-//        case .on:
-//            self.currentIndex? = Int.random(in: 0..<self.songs.count)
-//        default: break
-//        }
-        
-        if AudioPlayer.shared.currentIndex == AudioPlayer.shared.songs.count - 1 {
-            AudioPlayer.shared.currentIndex = 0
+        if SettingsManager.shared.settings.shuffle == .off && SettingsManager.shared.settings.repeating == .off {
+            getDefaultNextIndex()
+        } else if SettingsManager.shared.settings.shuffle == .on && SettingsManager.shared.settings.repeating == .off {
+            getShuffledIndex()
         } else {
-            AudioPlayer.shared.currentIndex? += 1
+            getRepeatingIndex()
         }
-        AudioPlayer.shared.playAudio(fileName:AudioPlayer.shared.songs[AudioPlayer.shared.currentIndex!].fileName)
-        delegate?.changeSong(song: AudioPlayer.shared.songs[AudioPlayer.shared.currentIndex!])
-        delegatePV?.songChange(song: AudioPlayer.shared.songs[AudioPlayer.shared.currentIndex!])
+        
+        APManager.shared.playAudio(fileName:APManager.shared.songs[APManager.shared.currentIndex!].fileName)
+        delegate?.changeSong(song: APManager.shared.songs[APManager.shared.currentIndex!])
+        delegatePV?.songChange(song: APManager.shared.songs[APManager.shared.currentIndex!])
     }
     func playPrevSong() {
         guard audioPlayer != nil || songs.isEmpty else { return }
-        if AudioPlayer.shared.currentIndex == 0 {
-            AudioPlayer.shared.currentIndex = AudioPlayer.shared.songs.count - 1
+        
+        if SettingsManager.shared.settings.shuffle == .off && SettingsManager.shared.settings.repeating == .off {
+            getDefaultPrevIndex()
+        } else if SettingsManager.shared.settings.shuffle == .on && SettingsManager.shared.settings.repeating == .off {
+            getShuffledIndex()
         } else {
-            AudioPlayer.shared.currentIndex? -= 1
+            getRepeatingIndex()
         }
-        AudioPlayer.shared.playAudio(fileName:AudioPlayer.shared.songs[AudioPlayer.shared.currentIndex!].fileName)
-        delegate?.changeSong(song: AudioPlayer.shared.songs[AudioPlayer.shared.currentIndex!])
-        delegatePV?.songChange(song: AudioPlayer.shared.songs[AudioPlayer.shared.currentIndex!])
+
+        APManager.shared.playAudio(fileName:APManager.shared.songs[APManager.shared.currentIndex!].fileName)
+        delegate?.changeSong(song: APManager.shared.songs[APManager.shared.currentIndex!])
+        delegatePV?.songChange(song: APManager.shared.songs[APManager.shared.currentIndex!])
     }
     
     func setupMediaPlayerNotificationView() {

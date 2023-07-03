@@ -10,24 +10,24 @@ class PlayerView: UIView {
     let label = UILabel()
     let progress = UIProgressView()
     let playPauseButton = UIButton()
-    
+    let buttonSize = CGSize(width: 20, height: 20)
     override init(frame: CGRect) {
         super.init(frame: frame)
-        AudioPlayer.shared.delegatePV = self
+        APManager.shared.delegatePV = self
         setupView()
     }
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-        AudioPlayer.shared.delegatePV = self
+        APManager.shared.delegatePV = self
         setupView()
     }
     
     @objc private func playPause() {
-        AudioPlayer.shared.playPause()
-        if AudioPlayer.shared.isPlaying {
-            playPauseButton.setImage(UIImage(systemName: "pause.fill"), for: .normal)
+        APManager.shared.playPause()
+        if APManager.shared.isPlaying {
+            playPauseButton.setImage(UIImage(systemName: "pause.fill")?.resized(to: buttonSize), for: .normal)
         } else {
-            playPauseButton.setImage(UIImage(systemName: "play.fill"), for: .normal)
+            playPauseButton.setImage(UIImage(systemName: "play.fill")?.resized(to: buttonSize), for: .normal)
         }
     }
 }
@@ -53,7 +53,7 @@ extension PlayerView {
         progress.progressTintColor = .red
         progress.progressViewStyle = .default
         progress.progress = 0
-        playPauseButton.setImage(UIImage(systemName: "play.fill"), for: .normal)
+        playPauseButton.setImage(UIImage(systemName: "play.fill")?.resized(to: buttonSize), for: .normal)
         playPauseButton.tintColor = .black
         playPauseButton.addTarget(self, action: #selector(playPause), for: .touchUpInside)
         
@@ -69,7 +69,7 @@ extension PlayerView {
         }
         playPauseButton.snp.makeConstraints { make in
             make.top.equalTo(progress.snp.bottom).offset(10)
-            make.left.equalTo(snp.right).offset(-30)
+            make.left.equalTo(snp.right).offset(-35)
         }
     }
 }
