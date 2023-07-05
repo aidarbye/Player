@@ -48,9 +48,9 @@ class SearchViewController: UIViewController,UITextFieldDelegate, UITableViewDel
             }
         }
         APManager.shared.currentIndex = index
-        APManager.shared.playAudio(fileName: songs[index].fileName)
-        APManager.shared.delegate?.changeSong(song: songs[index])
-        APManager.shared.delegatePV?.songChange(song: songs[index])
+        APManager.shared.playAudio(fileName: songs[indexPath.row].fileName)
+        APManager.shared.delegate?.changeSong(song: APManager.shared.songs[index])
+        APManager.shared.delegatePV?.songChange(song: APManager.shared.songs[index])
         tableView.reloadData()
     }
     

@@ -3,11 +3,8 @@ import SnapKit
 import UniformTypeIdentifiers
 import AVKit
 /*
- goals to finish
- After song searched, play only this songs, should put in another view?
  Optimize some process(like, its should be optional rght?)
  Timer? left bar button item
- UI!
 */
 
 protocol MediaViewControllerDelegate {
