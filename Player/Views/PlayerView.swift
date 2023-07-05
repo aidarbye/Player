@@ -25,9 +25,9 @@ class PlayerView: UIView {
     @objc private func playPause() {
         APManager.shared.playPause()
         if APManager.shared.isPlaying {
-            playPauseButton.setImage(UIImage(systemName: "pause.fill")?.resized(to: buttonSize), for: .normal)
+            playPauseButton.setImage(UIImage(systemName: "pause.fill")?.withTintColor(.white).resized(to: buttonSize), for: .normal)
         } else {
-            playPauseButton.setImage(UIImage(systemName: "play.fill")?.resized(to: buttonSize), for: .normal)
+            playPauseButton.setImage(UIImage(systemName: "play.fill")?.withTintColor(.white).resized(to: buttonSize), for: .normal)
         }
     }
 }
@@ -42,8 +42,8 @@ extension PlayerView: PlayerViewSongControllerProtocol {
 // MARK: UI
 extension PlayerView {
     func setupView() {
-        overrideUserInterfaceStyle = .light
-        backgroundColor = UIColor(red: 228/255, green: 228/255, blue: 228/255, alpha: 0.8)
+        overrideUserInterfaceStyle = .dark
+        backgroundColor = UIColor(red: 228/255, green: 228/255, blue: 228/255, alpha: 0.1)
         addSubview(label)
         addSubview(progress)
         addSubview(playPauseButton)
@@ -53,8 +53,8 @@ extension PlayerView {
         progress.progressTintColor = .red
         progress.progressViewStyle = .default
         progress.progress = 0
-        playPauseButton.setImage(UIImage(systemName: "play.fill")?.resized(to: buttonSize), for: .normal)
-        playPauseButton.tintColor = .black
+        playPauseButton.setImage(UIImage(systemName: "play")?.withTintColor(.white).resized(to: buttonSize), for: .normal)
+        playPauseButton.tintColor = .white
         playPauseButton.addTarget(self, action: #selector(playPause), for: .touchUpInside)
         
         progress.snp.makeConstraints { make in

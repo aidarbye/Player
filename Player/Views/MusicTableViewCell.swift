@@ -16,6 +16,7 @@ class MusicTableViewCell: UITableViewCell {
         contentView.addSubview(titleLabel)
         contentView.addSubview(image)
         titleLabel.tintColor = .black
+        backgroundColor = .init(red: 22/255, green: 22/255, blue: 22/255, alpha: 1)
         image.snp.makeConstraints { make in
             make.left.equalToSuperview().offset(10)
             make.centerY.equalToSuperview()

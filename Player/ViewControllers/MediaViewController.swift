@@ -3,6 +3,7 @@ import SnapKit
 import UniformTypeIdentifiers
 import AVKit
 /*
+ goals to finish
  After song searched, play only this songs, should put in another view?
  Optimize some process(like, its should be optional rght?)
  Timer? left bar button item
@@ -17,7 +18,6 @@ class MediaViewController: UIViewController, MediaViewControllerDelegate {
     let buttonSize = CGSize(width: 20, height: 20)
     var songs: [Audio] = []
     let tableView = UITableView()
-    let textField = UITextField()
     let playerView = PlayerView()
     var PlayerVC: PlayerViewController?
     var timer: Timer?
@@ -31,10 +31,11 @@ class MediaViewController: UIViewController, MediaViewControllerDelegate {
     }
     override func viewWillAppear(_ animated: Bool) {
         print("apperainceMEDIA")
+        tableView.reloadData()
         if APManager.shared.isPlaying {
-            playerView.playPauseButton.setImage(UIImage(systemName: "pause.fill")?.resized(to: buttonSize), for: .normal)
+            playerView.playPauseButton.setImage(UIImage(systemName: "pause")?.withTintColor(.white).resized(to: buttonSize), for: .normal)
         } else {
-            playerView.playPauseButton.setImage(UIImage(systemName: "play.fill")?.resized(to: buttonSize), for: .normal)
+            playerView.playPauseButton.setImage(UIImage(systemName: "play")?.withTintColor(.white).resized(to: buttonSize), for: .normal)
         }
         if let value = APManager.shared.audioPlayer?.currentTime(),
            let duration = APManager.shared.audioPlayer?.currentItem?.duration {
@@ -57,6 +58,9 @@ class MediaViewController: UIViewController, MediaViewControllerDelegate {
         print("disapearMEDIA")
         timer?.invalidate()
         timer = nil
+    }
+    func changeREDselect() {
+        tableView.reloadData()
     }
 }
 // MARK: TableViewDelegate
@@ -91,7 +95,7 @@ extension MediaViewController: UITableViewDelegate, UITableViewDataSource {
         APManager.shared.playAudio(fileName: songs[indexPath.row].fileName)
         APManager.shared.delegate?.changeSong(song: songs[indexPath.row])
         APManager.shared.delegatePV?.songChange(song: songs[indexPath.row])
-        playerView.playPauseButton.setImage(UIImage(systemName: "pause.fill")?.resized(to: buttonSize), for: .normal)
+        playerView.playPauseButton.setImage(UIImage(systemName: "pause.fill")?.withTintColor(.white).resized(to: buttonSize), for: .normal)
         tableView.reloadData()
     }
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -109,9 +113,6 @@ extension MediaViewController: UITableViewDelegate, UITableViewDataSource {
         cell.titleLabel.text = songs[indexPath.row].title
         cell.image.image = songs[indexPath.row].image
         return cell
-    }
-    func changeREDselect() {
-        tableView.reloadData()
     }
     func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
         songs.swapAt(sourceIndexPath.row, destinationIndexPath.row)
@@ -134,11 +135,6 @@ extension MediaViewController {
         guard let pvc = PlayerVC else { return }
         present(pvc, animated: true)
     }
-    @objc private func clearSearchText() {
-        textField.text = ""
-        songs = APManager.shared.songs
-        tableView.reloadData()
-    }
     @objc private func add() {
         let supportedTypes: [UTType] = [UTType.audio]
         let pickerViewController = UIDocumentPickerViewController(forOpeningContentTypes: supportedTypes,
@@ -153,32 +149,14 @@ extension MediaViewController {
         tableView.setEditing(!tableView.isEditing, animated: true)
         if tableView.isEditing {
             let button = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(edit))
-            button.tintColor = .black
+            button.tintColor = .white
             navigationItem.rightBarButtonItems![1] = button
         }
         else {
             let button = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(edit))
-            button.tintColor = .black
+            button.tintColor = .white
             navigationItem.rightBarButtonItems![1] = button
         }
-    }
-}
-
-// MARK: TextFieldDelegate methods
-extension MediaViewController: UITextFieldDelegate {
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
-        guard let text = textField.text else { return true }
-        if text.isEmpty {
-            songs = APManager.shared.songs
-            tableView.reloadData()
-        }
-        let filteredSongs = APManager.shared.songs.filter {$0.title.lowercased().contains(text.lowercased())}
-        if filteredSongs.isEmpty { return true } else {
-            songs = filteredSongs
-            tableView.reloadData()
-        }
-        return true
     }
 }
 
@@ -269,53 +247,49 @@ func getDurationFromUrl(selectedUrl: URL) async -> Float {
 // MARK: UI
 extension MediaViewController {
     func setupView() {
-        overrideUserInterfaceStyle = .light
-        let addButton = UIBarButtonItem(barButtonSystemItem: .add,target: self,action: #selector(add))
-        addButton.tintColor = .black
+        overrideUserInterfaceStyle = .dark
+
+        let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(add))
+        addButton.tintColor = .white
+
         let editButton = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(edit))
-        editButton.tintColor = .black
-        let clearButton = UIButton(type: .custom)
-        clearButton.setImage(UIImage(systemName: "x.circle"), for: .normal)
-        clearButton.tintColor = .red
-        clearButton.addTarget(self, action: #selector(clearSearchText), for: .touchUpInside)
+        editButton.tintColor = .white
+
         title = "media"
-        view.backgroundColor = .white
-        navigationController?.navigationBar.prefersLargeTitles = true
+
+        let navigationBarAppearance = UINavigationBarAppearance()
+        navigationBarAppearance.backgroundColor = .black
+        navigationBarAppearance.titleTextAttributes = [.foregroundColor: UIColor.white]
+        navigationController?.navigationBar.standardAppearance = navigationBarAppearance
+        navigationController?.navigationBar.scrollEdgeAppearance = navigationBarAppearance
+        navigationController?.navigationBar.prefersLargeTitles = false
+        
         navigationItem.largeTitleDisplayMode = .always
-        navigationItem.rightBarButtonItems = [addButton,editButton]
-        textField.delegate = self
-        textField.autocapitalizationType = .none
-        textField.autocorrectionType = .no
-        textField.backgroundColor = UIColor(red: 248/255, green: 248/255, blue: 248/255, alpha: 1)
-        textField.layer.cornerRadius = 10
-        textField.placeholder = " search"
-        textField.rightView = clearButton
-        textField.rightViewMode = .always
+        navigationItem.rightBarButtonItems = [addButton, editButton]
+
         tableView.allowsSelection = true
+        tableView.backgroundColor = .black
         tableView.register(MusicTableViewCell.self, forCellReuseIdentifier: "MusicCell")
         tableView.delegate = self
         tableView.dataSource = self
+
         let tap = UITapGestureRecognizer(target: self, action: #selector(tapGesture))
         let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(swipeGesture(_:)))
         panGestureRecognizer.cancelsTouchesInView = false
         playerView.addGestureRecognizer(panGestureRecognizer)
         playerView.addGestureRecognizer(tap)
+
         view.addSubview(tableView)
-        view.addSubview(textField)
         view.addSubview(playerView)
-        textField.snp.makeConstraints { make in
-            make.leading.equalToSuperview().offset(10)
-            make.trailing.equalToSuperview().offset(-10)
-            make.height.equalTo(40)
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
-        }
+
         playerView.snp.makeConstraints { make in
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
             make.width.equalToSuperview()
             make.height.equalTo(50)
         }
+
         tableView.snp.makeConstraints { make in
-            make.top.equalTo(textField.snp.bottom).offset(10)
+            make.top.equalTo(view.snp.top)
             make.leading.equalToSuperview()
             make.trailing.equalToSuperview()
             make.bottom.equalTo(playerView.snp.top)

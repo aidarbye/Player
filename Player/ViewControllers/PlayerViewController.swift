@@ -33,9 +33,9 @@ class PlayerViewController: UIViewController {
             self.slider.value = Float(value.seconds)
         }
         if APManager.shared.isPlaying {
-            self.PlayPauseButton.setImage(UIImage(systemName: "pause.fill")?.resized(to: buttonSize), for: .normal)
+            self.PlayPauseButton.setImage(UIImage(systemName: "pause.fill")?.withTintColor(.white).resized(to: buttonSize), for: .normal)
         } else {
-            self.PlayPauseButton.setImage(UIImage(systemName: "play.fill")?.resized(to: buttonSize), for: .normal)
+            self.PlayPauseButton.setImage(UIImage(systemName: "play.fill")?.withTintColor(.white).resized(to: buttonSize), for: .normal)
         }
         if timer == nil {
             timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { (_) in
@@ -58,31 +58,33 @@ extension PlayerViewController {
     @objc func repeatAction() {
         switch SettingsManager.shared.settings.repeating {
         case .off: Repeat.tintColor = .red
-            Repeat.setImage(UIImage(systemName: "repeat.1")?.resized(to: buttonSize), for: .normal)
-        case .oneSong: Repeat.setImage(UIImage(systemName: "repeat")?.resized(to: buttonSize), for: .normal)
-            Repeat.tintColor = .black
+            Repeat.setImage(UIImage(systemName: "repeat.1")?.withTintColor(.white).resized(to: buttonSize), for: .normal)
+        case .oneSong: Repeat.setImage(UIImage(systemName: "repeat")?.withTintColor(.white).resized(to: buttonSize), for: .normal)
+            Repeat.tintColor = .white
         }
         SettingsManager.shared.nextRepeat()
     }
     @objc func shuffle() {
         switch SettingsManager.shared.settings.shuffle {
         case .off: ShuffleButton.tintColor = .red
-        case .on: ShuffleButton.tintColor = .black }
+        case .on: ShuffleButton.tintColor = .white }
         SettingsManager.shared.nextShuffle()
     }
     @objc func playStop() {
         APManager.shared.playPause()
         if APManager.shared.isPlaying {
-            PlayPauseButton.setImage(UIImage(systemName: "pause.fill")?.resized(to: buttonSize), for: .normal)
+            PlayPauseButton.setImage(UIImage(systemName: "pause.fill")?.withTintColor(.white).resized(to: buttonSize), for: .normal)
         } else {
-            PlayPauseButton.setImage(UIImage(systemName: "play.fill")?.resized(to: buttonSize), for: .normal)
+            PlayPauseButton.setImage(UIImage(systemName: "play.fill")?.withTintColor(.white).resized(to: buttonSize), for: .normal)
         }
     }
     @objc func NextMusicPlay() {
         APManager.shared.playNextSong()
+        PlayPauseButton.setImage(UIImage(systemName: "pause.fill")?.resized(to: buttonSize), for: .normal)
     }
     @objc func PrevMusicPlay() {
         APManager.shared.playPrevSong()
+        PlayPauseButton.setImage(UIImage(systemName: "pause.fill")?.resized(to: buttonSize), for: .normal)
     }
     @objc func scrubAudio() {
         if let audioPlayer = APManager.shared.audioPlayer {
@@ -122,7 +124,7 @@ extension PlayerViewController: PlayerViewControllerDelegate {
 // MARK: UI
 extension PlayerViewController {
     private func setupView() {
-        overrideUserInterfaceStyle = .light
+        overrideUserInterfaceStyle = .dark
         let NextMusicButton = UIButton(type: .system)
         let PrevMusicButton = UIButton(type: .system)
         let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(swipeGesture(_:)))
@@ -135,9 +137,9 @@ extension PlayerViewController {
         artistLabel.textAlignment = .center
         artistLabel.text = "and there too"
         artistLabel.font = .systemFont(ofSize: 15)
-        slider.tintColor = .black
-        slider.thumbTintColor = .black
-        view.backgroundColor = .white
+        slider.tintColor = .white
+        slider.thumbTintColor = .white
+        view.backgroundColor = .black
         view.addSubview(PlayPauseButton)
         view.addSubview(NextMusicButton)
         view.addSubview(PrevMusicButton)
@@ -149,34 +151,34 @@ extension PlayerViewController {
         view.addSubview(artistLabel)
         view.addGestureRecognizer(panGestureRecognizer)
         
-        PlayPauseButton.setImage(UIImage(systemName: "play.fill")?.resized(to: buttonSize), for: .normal)
+        PlayPauseButton.setImage(UIImage(systemName: "play.fill")?.withTintColor(.white).resized(to: buttonSize), for: .normal)
         PlayPauseButton.addTarget(self, action: #selector(playStop), for: .touchUpInside)
-        PlayPauseButton.tintColor = .black
+        PlayPauseButton.tintColor = .white
         PlayPauseButton.imageView?.contentMode = .scaleToFill
         
-        NextMusicButton.setImage(UIImage(systemName: "arrowtriangle.right")?.resized(to: buttonSize), for: .normal)
+        NextMusicButton.setImage(UIImage(systemName: "arrowtriangle.right")?.withTintColor(.white).resized(to: buttonSize), for: .normal)
         NextMusicButton.addTarget(self, action: #selector(NextMusicPlay), for: .touchUpInside)
-        NextMusicButton.tintColor = .black
+        NextMusicButton.tintColor = .white
         
-        Repeat.setImage(UIImage(systemName: "repeat")?.resized(to: buttonSize), for: .normal)
+        Repeat.setImage(UIImage(systemName: "repeat")?.withTintColor(.white).resized(to: buttonSize), for: .normal)
         Repeat.addTarget(self, action: #selector(repeatAction), for: .touchUpInside)
         switch SettingsManager.shared.settings.repeating {
-        case .off: Repeat.tintColor = .black
+        case .off: Repeat.tintColor = .white
         case .oneSong:
-            Repeat.setImage(UIImage(systemName: "repeat.1")?.resized(to: buttonSize), for: .normal)
+            Repeat.setImage(UIImage(systemName: "repeat.1")?.withTintColor(.white).resized(to: buttonSize), for: .normal)
             Repeat.tintColor = .red
         }
         
-        ShuffleButton.setImage(UIImage(systemName: "shuffle")?.resized(to: buttonSize), for: .normal)
+        ShuffleButton.setImage(UIImage(systemName: "shuffle")?.withTintColor(.white).resized(to: buttonSize), for: .normal)
         ShuffleButton.addTarget(self, action: #selector(shuffle), for: .touchUpInside)
         switch SettingsManager.shared.settings.shuffle {
         case .on: ShuffleButton.tintColor = .red
-        case .off: ShuffleButton.tintColor = .black
+        case .off: ShuffleButton.tintColor = .white
         }
         
-        PrevMusicButton.setImage(UIImage(systemName: "arrowtriangle.backward")?.resized(to: buttonSize), for: .normal)
+        PrevMusicButton.setImage(UIImage(systemName: "arrowtriangle.backward")?.withTintColor(.white).resized(to: buttonSize), for: .normal)
         PrevMusicButton.addTarget(self, action: #selector(PrevMusicPlay), for: .touchUpInside)
-        PrevMusicButton.tintColor = .black
+        PrevMusicButton.tintColor = .white
         
         slider.addTarget(self, action: #selector(sliderValueChanged(_:)), for: .valueChanged)
         slider.addTarget(self, action: #selector(scrubAudio), for: .touchUpInside)

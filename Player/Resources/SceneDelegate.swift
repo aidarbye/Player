@@ -12,17 +12,19 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     func setupView() {
         let mainViewController = UINavigationController(rootViewController: MediaViewController())
-        mainViewController.tabBarItem = UITabBarItem(title: "Media",
+        mainViewController.tabBarItem = UITabBarItem(title: "media",
                                                        image: UIImage(systemName: "music.note.list"),
                                                        tag: 0)
-        let emptyViewController = UINavigationController(rootViewController: EmptyViewController())
-        emptyViewController.tabBarItem = UITabBarItem(title: "soundcloud",
-                                                       image: UIImage(systemName: "cloud.fill"),
+        let searchVC = UINavigationController(rootViewController: SearchViewController())
+        searchVC.tabBarItem = UITabBarItem(title: "search",
+                                                       image: UIImage(systemName: "magnifyingglass"),
                                                        tag: 1)
         let tabBarController = UITabBarController()
-        tabBarController.tabBar.backgroundColor = UIColor(red: 228/255, green: 228/255, blue: 228/255, alpha: 1)
-        tabBarController.tabBar.tintColor = .black
-        tabBarController.viewControllers = [mainViewController, emptyViewController]
+        tabBarController.tabBar.backgroundColor = .black
+        tabBarController.tabBar.barTintColor = .black
+        tabBarController.tabBar.tintColor = .white
+        tabBarController.tabBar.unselectedItemTintColor = .gray
+        tabBarController.viewControllers = [mainViewController, searchVC]
         window?.rootViewController = tabBarController
         window?.makeKeyAndVisible()
     }
