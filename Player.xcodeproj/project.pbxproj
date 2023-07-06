@@ -23,6 +23,8 @@
 		B4F506D92A52084000EBCC97 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4F506D82A52084000EBCC97 /* Settings.swift */; };
 		B4F506DB2A520B8C00EBCC97 /* SettingsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4F506DA2A520B8C00EBCC97 /* SettingsManager.swift */; };
 		B4F506DD2A52BC3C00EBCC97 /* Extension+Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4F506DC2A52BC3C00EBCC97 /* Extension+Image.swift */; };
+		B4F506E02A56CEF000EBCC97 /* MetadataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4F506DF2A56CEF000EBCC97 /* MetadataManager.swift */; };
+		B4F506E82A57385F00EBCC97 /* TimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4F506E72A57385F00EBCC97 /* TimerView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,6 +45,8 @@
 		B4F506D82A52084000EBCC97 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		B4F506DA2A520B8C00EBCC97 /* SettingsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsManager.swift; sourceTree = "<group>"; };
 		B4F506DC2A52BC3C00EBCC97 /* Extension+Image.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extension+Image.swift"; sourceTree = "<group>"; };
+		B4F506DF2A56CEF000EBCC97 /* MetadataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetadataManager.swift; sourceTree = "<group>"; };
+		B4F506E72A57385F00EBCC97 /* TimerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimerView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,6 +105,7 @@
 				B42535E72A483DDC0087A64F /* StorageManager.swift */,
 				B490B7892A325EFF004F6F15 /* APManager.swift */,
 				B4F506DA2A520B8C00EBCC97 /* SettingsManager.swift */,
+				B4F506DF2A56CEF000EBCC97 /* MetadataManager.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -108,6 +113,7 @@
 		B490B78F2A32693B004F6F15 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				B4F506E72A57385F00EBCC97 /* TimerView.swift */,
 				B490B7852A31DEBF004F6F15 /* MusicTableViewCell.swift */,
 				B42535E92A48C86B0087A64F /* PlayerView.swift */,
 			);
@@ -223,7 +229,9 @@
 				B4F506DB2A520B8C00EBCC97 /* SettingsManager.swift in Sources */,
 				B490B78A2A325EFF004F6F15 /* APManager.swift in Sources */,
 				B4F506D92A52084000EBCC97 /* Settings.swift in Sources */,
+				B4F506E82A57385F00EBCC97 /* TimerView.swift in Sources */,
 				B42535E82A483DDC0087A64F /* StorageManager.swift in Sources */,
+				B4F506E02A56CEF000EBCC97 /* MetadataManager.swift in Sources */,
 				B4F506DD2A52BC3C00EBCC97 /* Extension+Image.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -1,10 +1,11 @@
 import UIKit
+import SwiftUI
 import SnapKit
 import UniformTypeIdentifiers
 import AVKit
 /*
+ Timer
  Optimize some process(like, its should be optional rght?)
- Timer? left bar button item
 */
 
 protocol MediaViewControllerDelegate {
@@ -13,11 +14,11 @@ protocol MediaViewControllerDelegate {
 
 class MediaViewController: UIViewController, MediaViewControllerDelegate {
     let buttonSize = CGSize(width: 20, height: 20)
-    var songs: [Audio] = []
     let tableView = UITableView()
     let playerView = PlayerView()
     var PlayerVC: PlayerViewController?
     var timer: Timer?
+    var songs: [Audio] = []
     
     override func viewDidLoad() {
         songs = APManager.shared.songs
@@ -155,11 +156,17 @@ extension MediaViewController {
             navigationItem.rightBarButtonItems![1] = button
         }
     }
+    @objc private func timerAction() {
+        let host = UIHostingController(rootView: TimerView())
+        host.overrideUserInterfaceStyle = .dark
+        present(host, animated: true)
+    }
 }
 
 // MARK: DocumentPicker delegate method
 extension MediaViewController: UIDocumentPickerDelegate {
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+        let metadataManager = MetadataManager.shared
         let fileManager = FileManager.default
         let documentsDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
         for url in urls {
@@ -167,11 +174,11 @@ extension MediaViewController: UIDocumentPickerDelegate {
             let destinationURL = documentsDirectory.appendingPathComponent(fileName)
             do { try fileManager.moveItem(at: url, to: destinationURL) } catch {  }
             Task {
-                if let metadata = await getMetadataFromURL(selectedUrl: destinationURL) {
-                    let imageData = await getImageFromMetadata(metadata: metadata)
-                    let artist = await getArtistFromMetadata(metadata: metadata)
-                    let title = await getTitleFromMetadata(metadata: metadata)
-                    let duration = await getDurationFromUrl(selectedUrl: url)
+                if let metadata = await metadataManager.getMetadataFromURL(selectedUrl: destinationURL) {
+                    let imageData = await metadataManager.getImageFromMetadata(metadata: metadata)
+                    let artist = await metadataManager.getArtistFromMetadata(metadata: metadata)
+                    let title = await metadataManager.getTitleFromMetadata(metadata: metadata)
+                    let duration = await metadataManager.getDurationFromUrl(selectedUrl: url)
                     let fileName = url.absoluteURL.lastPathComponent
                     let AudioFile = Audio(fileName: fileName,title: title,artist: artist, duration: duration, imageData: imageData)
                     if !APManager.shared.songs.contains(AudioFile) {
@@ -184,63 +191,6 @@ extension MediaViewController: UIDocumentPickerDelegate {
         }
     }
 }
-func getMetadataFromURL(selectedUrl: URL) async -> [AVMetadataItem]? {
-    let asset = AVAsset(url: selectedUrl)
-    do {
-     return try await asset.load(.commonMetadata)
-    } catch {
-     print(error.localizedDescription)
-    }
-    return nil
-}
-func getImageFromMetadata(metadata: [AVMetadataItem]) async -> Data {
-    do {
-        for metadataItem in metadata {
-            if metadataItem.commonKey?.rawValue == "artwork" {
-                let data = try await metadataItem.load(.value) as! Data
-                return data
-            }
-        }
-    } catch {
-        print(error.localizedDescription)
-    }
-    return Data()
-}
-func getArtistFromMetadata(metadata: [AVMetadataItem]) async -> String {
-    do {
-        for metadataItem in metadata {
-            if metadataItem.commonKey?.rawValue == "artist" {
-                return try await metadataItem.load(.value) as! String
-            }
-        }
-    } catch {
-        print(error.localizedDescription)
-    }
-    return "NoName"
-}
-func getTitleFromMetadata(metadata: [AVMetadataItem]) async -> String {
-    do {
-        for metadataItem in metadata {
-            if metadataItem.commonKey?.rawValue == "title" {
-                return try await metadataItem.load(.value) as! String
-            }
-        }
-    } catch {
-        print(error.localizedDescription)
-    }
-    return "NoName"
-}
-func getDurationFromUrl(selectedUrl: URL) async -> Float {
-    let asset = AVAsset(url: selectedUrl)
-    do {
-        let duration = try await asset.load(.duration)
-        let seconds = CMTimeGetSeconds(duration)
-        return Float(seconds)
-    } catch {
-        print(error.localizedDescription)
-    }
-    return 0.0
-}
 // MARK: UI
 extension MediaViewController {
     func setupView() {
@@ -252,6 +202,9 @@ extension MediaViewController {
         let editButton = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(edit))
         editButton.tintColor = .white
 
+        let timerButton = UIBarButtonItem(title: nil, image: UIImage(systemName: "timer"), target: self, action: #selector(timerAction))
+        timerButton.tintColor = .white
+        
         title = "media"
 
         let navigationBarAppearance = UINavigationBarAppearance()
@@ -263,7 +216,8 @@ extension MediaViewController {
         
         navigationItem.largeTitleDisplayMode = .always
         navigationItem.rightBarButtonItems = [addButton, editButton]
-
+        navigationItem.leftBarButtonItem = timerButton
+        
         tableView.allowsSelection = true
         tableView.backgroundColor = .black
         tableView.register(MusicTableViewCell.self, forCellReuseIdentifier: "MusicCell")
@@ -278,7 +232,7 @@ extension MediaViewController {
 
         view.addSubview(tableView)
         view.addSubview(playerView)
-
+        
         playerView.snp.makeConstraints { make in
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
             make.width.equalToSuperview()
