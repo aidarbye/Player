@@ -4,7 +4,6 @@ import SnapKit
 import UniformTypeIdentifiers
 import AVKit
 /*
- Timer
  Optimize some process(like, its should be optional rght?)
 */
 
@@ -16,9 +15,11 @@ class MediaViewController: UIViewController, MediaViewControllerDelegate {
     let buttonSize = CGSize(width: 20, height: 20)
     let tableView = UITableView()
     let playerView = PlayerView()
+    var vm: TimerViewModel = TimerViewModel()
     var PlayerVC: PlayerViewController?
     var timer: Timer?
     var songs: [Audio] = []
+    //    var timerForLeftAction: Timer?
     
     override func viewDidLoad() {
         songs = APManager.shared.songs
@@ -157,10 +158,41 @@ extension MediaViewController {
         }
     }
     @objc private func timerAction() {
-        let host = UIHostingController(rootView: TimerView())
+//        vm.onButtonTapped = { [weak self] in
+//            self?.changeColorOfLeftBatItem()
+//        }
+//        vm.startTimer = { [weak self] in
+//            self?.startTimer()
+//        }
+//        vm.stopTimer = { [weak self] in
+//            self?.stopTimer()
+//        }
+        let host = UIHostingController(rootView: TimerView(vm: self.vm))
         host.overrideUserInterfaceStyle = .dark
         present(host, animated: true)
     }
+    private func changeColorOfLeftBatItem() {
+        self.navigationItem.leftBarButtonItem?.tintColor = vm.disabled ? .orange : .white
+    }
+//    private func startTimer() {
+//        if timerForLeftAction == nil {
+//            self.timerForLeftAction = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) {[weak self] (_) in
+//                self?.vm.progress -= 1/3600
+//                if self!.vm.progress < 0 {
+//                    self?.stopTimer()
+//                }
+//            }
+//        }
+//    }
+//    private func stopTimer() {
+//        timerForLeftAction?.invalidate()
+//        timerForLeftAction = nil
+//        vm.disabled = false
+//        if APManager.shared.isPlaying {
+//            APManager.shared.playPause()
+//        }
+//        self.navigationItem.leftBarButtonItem?.tintColor = .white
+//    }
 }
 
 // MARK: DocumentPicker delegate method

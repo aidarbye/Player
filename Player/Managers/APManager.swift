@@ -2,7 +2,7 @@ import Foundation
 import MediaPlayer
 import UIKit
 
-class APManager: NSObject, UIDocumentPickerDelegate {
+final class APManager: NSObject, UIDocumentPickerDelegate {
     static let shared = APManager()
     var audioPlayer: AVPlayer?
     var currentIndex: Int?
