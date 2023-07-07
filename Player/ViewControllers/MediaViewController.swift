@@ -3,6 +3,7 @@ import SwiftUI
 import SnapKit
 import UniformTypeIdentifiers
 import AVKit
+import Combine
 /*
  Optimize some process(like, its should be optional rght?)
 */
@@ -19,17 +20,20 @@ class MediaViewController: UIViewController, MediaViewControllerDelegate {
     var PlayerVC: PlayerViewController?
     var timer: Timer?
     var songs: [Audio] = []
-    //    var timerForLeftAction: Timer?
+    var cancellable: AnyCancellable?
+    var anothercanc: AnyCancellable?
+    var host = UIHostingController(rootView: TimerView(vm: TimerViewModel()))
+    var timerTV: Timer?
     
     override func viewDidLoad() {
         songs = APManager.shared.songs
         PlayerVC = PlayerViewController()
         PlayerVC?.modalPresentationStyle = .fullScreen
         APManager.shared.delegateMVC = self
+        host.rootView = TimerView(vm: self.vm)
         setupView()
     }
     override func viewWillAppear(_ animated: Bool) {
-        print("apperainceMEDIA")
         tableView.reloadData()
         if APManager.shared.isPlaying {
             playerView.playPauseButton.setImage(UIImage(systemName: "pause")?.withTintColor(.white).resized(to: buttonSize), for: .normal)
@@ -157,42 +161,32 @@ extension MediaViewController {
             navigationItem.rightBarButtonItems![1] = button
         }
     }
+    
     @objc private func timerAction() {
-//        vm.onButtonTapped = { [weak self] in
-//            self?.changeColorOfLeftBatItem()
-//        }
-//        vm.startTimer = { [weak self] in
-//            self?.startTimer()
-//        }
-//        vm.stopTimer = { [weak self] in
-//            self?.stopTimer()
-//        }
-        let host = UIHostingController(rootView: TimerView(vm: self.vm))
-        host.overrideUserInterfaceStyle = .dark
+        cancellable = host.rootView.startTimer.sink { [weak self] in
+            self?.timerTV = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
+                print("zapusk")
+                if self!.vm.progress > 0 {
+                    if self!.vm.progress - 1/60 > 0 {
+                        self?.vm.progress -= 1/60
+                        self?.vm.angle = self!.vm.progress * 360
+                    } else {
+                        self?.vm.progress = 0
+                        self?.vm.angle = self!.vm.progress * 360
+                        self?.host.rootView.stopTimer.send()
+                    }
+                }
+            }
+        }
+        anothercanc = host.rootView.stopTimer.sink { [weak self] in
+            self?.timerTV?.invalidate()
+            self?.timerTV = nil
+        }
         present(host, animated: true)
     }
     private func changeColorOfLeftBatItem() {
         self.navigationItem.leftBarButtonItem?.tintColor = vm.disabled ? .orange : .white
     }
-//    private func startTimer() {
-//        if timerForLeftAction == nil {
-//            self.timerForLeftAction = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) {[weak self] (_) in
-//                self?.vm.progress -= 1/3600
-//                if self!.vm.progress < 0 {
-//                    self?.stopTimer()
-//                }
-//            }
-//        }
-//    }
-//    private func stopTimer() {
-//        timerForLeftAction?.invalidate()
-//        timerForLeftAction = nil
-//        vm.disabled = false
-//        if APManager.shared.isPlaying {
-//            APManager.shared.playPause()
-//        }
-//        self.navigationItem.leftBarButtonItem?.tintColor = .white
-//    }
 }
 
 // MARK: DocumentPicker delegate method
@@ -262,6 +256,8 @@ extension MediaViewController {
         playerView.addGestureRecognizer(panGestureRecognizer)
         playerView.addGestureRecognizer(tap)
 
+        host.overrideUserInterfaceStyle = .dark
+        
         view.addSubview(tableView)
         view.addSubview(playerView)
         

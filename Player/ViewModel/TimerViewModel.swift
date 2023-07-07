@@ -2,10 +2,6 @@ import SwiftUI
 
 final class TimerViewModel: ObservableObject {
     
-//    var onButtonTapped: (() -> Void)?
-//    var startTimer: (()->Void)?
-//    var stopTimer: (()->Void)?
-    
     @Published var size = UIScreen.main.bounds.width - 130
     @Published var progress : CGFloat = 0
     @Published var angle : Double = 0

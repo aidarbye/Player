@@ -1,8 +1,11 @@
 import SwiftUI
-
+import Combine
 struct TimerView: View {
     @Environment(\.dismiss) var dismiss
     @StateObject var vm: TimerViewModel
+    
+    var startTimer = PassthroughSubject<Void,Never>()
+    var stopTimer = PassthroughSubject<Void,Never>()
     
     var body: some View {
         NavigationView {
@@ -40,7 +43,13 @@ struct TimerView: View {
                 }
                 .disabled(vm.disabled)
                 Button {
-                    
+                    if vm.disabled {
+                        stopTimer.send()
+                    } else {
+                        startTimer.send()
+                    }
+                    vm.disabled.toggle() 
+                    dismiss()
                 } label: {
                     ZStack {
                         Rectangle()
