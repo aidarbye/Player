@@ -49,7 +49,7 @@ class SearchViewController: UIViewController,UITextFieldDelegate, UITableViewDel
         }
         APManager.shared.currentIndex = index
         APManager.shared.playAudio(fileName: songs[indexPath.row].fileName)
-        APManager.shared.delegate?.changeSong(song: APManager.shared.songs[index])
+        APManager.shared.delegatePVC?.changeSong(song: APManager.shared.songs[index])
         APManager.shared.delegatePV?.songChange(song: APManager.shared.songs[index])
         tableView.reloadData()
     }
@@ -88,14 +88,14 @@ class SearchViewController: UIViewController,UITextFieldDelegate, UITableViewDel
             textFilterByAuthor()
         }
         print("end")
-        UIView.animate(withDuration: 0.2) {
-            textField.snp.updateConstraints { make in
+        UIView.animate(withDuration: 0.2) { [weak self] in
+            self?.textField.snp.updateConstraints { make in
                 make.trailing.equalToSuperview().offset(-10)
             }
-            self.cancelButton.snp.updateConstraints { make in
+            self?.cancelButton.snp.updateConstraints { make in
                 make.leading.equalTo(textField.snp.trailing).offset(10)
             }
-            self.view.layoutIfNeeded()
+            self?.view.layoutIfNeeded()
         }
     }
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -103,14 +103,14 @@ class SearchViewController: UIViewController,UITextFieldDelegate, UITableViewDel
     }
     func textFieldDidBeginEditing(_ textField: UITextField) {
         print("start")
-        UIView.animate(withDuration: 0.2) {
-            textField.snp.updateConstraints { [weak self] make in
+        UIView.animate(withDuration: 0.2) { [weak self] in
+            self?.textField.snp.updateConstraints { [weak self] make in
                 make.trailing.equalToSuperview().offset(-((self?.view.bounds.width)! / 3.5))
             }
-            self.cancelButton.snp.updateConstraints { make in
+            self?.cancelButton.snp.updateConstraints { make in
                 make.leading.equalTo(textField.snp.trailing).offset(10)
             }
-            self.view.layoutIfNeeded()
+            self?.view.layoutIfNeeded()
         }
     }
     

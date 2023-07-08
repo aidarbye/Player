@@ -17,12 +17,11 @@ class PlayerViewController: UIViewController {
     let PlayPauseButton = UIButton(type: .system)
     let Repeat = UIButton(type: .system)
     
-    var delegate: PlayerViewControllerDelegate?
     var timer: Timer?
     
     override func viewDidLoad() {
         setupView()
-        APManager.shared.delegate = self
+        APManager.shared.delegatePVC = self
         guard let index = APManager.shared.currentIndex else { return }
         self.imageView.image = APManager.shared.songs[index].image
         self.slider.maximumValue = APManager.shared.songs[index].duration
@@ -39,10 +38,10 @@ class PlayerViewController: UIViewController {
             self.PlayPauseButton.setImage(UIImage(systemName: "play.fill")?.withTintColor(.white).resized(to: buttonSize), for: .normal)
         }
         if timer == nil {
-            timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { (_) in
+            timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] (_) in
                 if APManager.shared.isPlaying {
                     if let value = APManager.shared.audioPlayer?.currentTime() {
-                        self.slider.value = Float(value.seconds)
+                        self?.slider.value = Float(value.seconds)
                     }
                 }
             }

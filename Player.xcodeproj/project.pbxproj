@@ -84,6 +84,7 @@
 		B4402C012A31BEB300B1CC46 /* Player */ = {
 			isa = PBXGroup;
 			children = (
+				B48945E72A598A7F0010435C /* SwiftUIViews */,
 				B4F506EB2A57E20400EBCC97 /* ViewModel */,
 				B4F506DE2A55596200EBCC97 /* Resources */,
 				B490B7902A326947004F6F15 /* ViewControllers */,
@@ -93,6 +94,15 @@
 				B4402C102A31BEB500B1CC46 /* Info.plist */,
 			);
 			path = Player;
+			sourceTree = "<group>";
+		};
+		B48945E72A598A7F0010435C /* SwiftUIViews */ = {
+			isa = PBXGroup;
+			children = (
+				B4F506EC2A58865300EBCC97 /* ClockTextView.swift */,
+				B4F506E72A57385F00EBCC97 /* TimerView.swift */,
+			);
+			path = SwiftUIViews;
 			sourceTree = "<group>";
 		};
 		B490B78D2A32691F004F6F15 /* Models */ = {
@@ -120,8 +130,6 @@
 			children = (
 				B490B7852A31DEBF004F6F15 /* MusicTableViewCell.swift */,
 				B42535E92A48C86B0087A64F /* PlayerView.swift */,
-				B4F506EC2A58865300EBCC97 /* ClockTextView.swift */,
-				B4F506E72A57385F00EBCC97 /* TimerView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";

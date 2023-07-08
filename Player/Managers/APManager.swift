@@ -9,7 +9,7 @@ final class APManager: NSObject, UIDocumentPickerDelegate {
     var isPlaying: Bool = false
     var songs: [Audio] = []
     
-    var delegate: PlayerViewControllerDelegate?
+    var delegatePVC: PlayerViewControllerDelegate?
     var delegatePV: PlayerViewSongControllerProtocol?
     var delegateMVC: MediaViewControllerDelegate?
     
@@ -78,9 +78,9 @@ final class APManager: NSObject, UIDocumentPickerDelegate {
         }
         
         APManager.shared.playAudio(fileName:APManager.shared.songs[APManager.shared.currentIndex!].fileName)
-        delegate?.changeSong(song: APManager.shared.songs[APManager.shared.currentIndex!])
+        delegatePVC?.changeSong(song: APManager.shared.songs[APManager.shared.currentIndex!])
         delegatePV?.songChange(song: APManager.shared.songs[APManager.shared.currentIndex!])
-        delegateMVC?.changeREDselect()
+        delegateMVC?.nowSelectedAudio()
     }
     func playPrevSong() {
         guard audioPlayer != nil || songs.isEmpty else { return }
@@ -94,9 +94,9 @@ final class APManager: NSObject, UIDocumentPickerDelegate {
         }
 
         APManager.shared.playAudio(fileName:APManager.shared.songs[APManager.shared.currentIndex!].fileName)
-        delegate?.changeSong(song: APManager.shared.songs[APManager.shared.currentIndex!])
+        delegatePVC?.changeSong(song: APManager.shared.songs[APManager.shared.currentIndex!])
         delegatePV?.songChange(song: APManager.shared.songs[APManager.shared.currentIndex!])
-        delegateMVC?.changeREDselect()
+        delegateMVC?.nowSelectedAudio()
     }
     
     func setupMediaPlayerNotificationView() {

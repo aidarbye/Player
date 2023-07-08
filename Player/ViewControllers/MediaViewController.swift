@@ -6,7 +6,7 @@ import AVKit
 import Combine
 
 protocol MediaViewControllerDelegate {
-    func changeREDselect()
+    func nowSelectedAudio()
 }
 
 class MediaViewController: UIViewController, MediaViewControllerDelegate {
@@ -14,19 +14,17 @@ class MediaViewController: UIViewController, MediaViewControllerDelegate {
     let tableView = UITableView()
     let playerView = PlayerView()
     var vm: TimerViewModel = TimerViewModel()
-    var PlayerVC: PlayerViewController?
+    var PlayerVC: PlayerViewController? = PlayerViewController()
     var timer: Timer?
-    var songs: [Audio] = []
+
     var cancellable: AnyCancellable?
     var anothercanc: AnyCancellable?
     var forcedcanc: AnyCancellable?
+    
     var host = UIHostingController(rootView: TimerView(vm: TimerViewModel()))
     var timerTV: Timer?
     
     override func viewDidLoad() {
-        songs = APManager.shared.songs
-        PlayerVC = PlayerViewController()
-        PlayerVC?.modalPresentationStyle = .fullScreen
         APManager.shared.delegateMVC = self
         host.rootView = TimerView(vm: self.vm)
         setupView()
@@ -44,11 +42,11 @@ class MediaViewController: UIViewController, MediaViewControllerDelegate {
                                                      animated: false)
         }
         if timer == nil {
-            self.timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { (_) in
+            self.timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] (_) in
                 if APManager.shared.isPlaying {
                     if let value = APManager.shared.audioPlayer?.currentTime(),
                        let duration = APManager.shared.audioPlayer?.currentItem?.duration {
-                            self.playerView.progress.setProgress(Float(value.seconds / duration.seconds),
+                            self?.playerView.progress.setProgress(Float(value.seconds / duration.seconds),
                                                                  animated: false)
                     }
                 }
@@ -56,18 +54,17 @@ class MediaViewController: UIViewController, MediaViewControllerDelegate {
         }
     }
     override func viewWillDisappear(_ animated: Bool) {
-        print("disapearMEDIA")
         timer?.invalidate()
         timer = nil
     }
-    func changeREDselect() {
+    func nowSelectedAudio() {
         tableView.reloadData()
     }
 }
 // MARK: TableViewDelegate
 extension MediaViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        songs.count
+        APManager.shared.songs.count
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         80
@@ -77,25 +74,16 @@ extension MediaViewController: UITableViewDelegate, UITableViewDataSource {
     }
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            var index = 0
-            for i in APManager.shared.songs.indices {
-                if APManager.shared.songs[i] == songs[indexPath.row] {
-                    index = i
-                    break
-                }
-            }
-            
-            APManager.shared.songs.remove(at: index)
-            songs.remove(at: indexPath.row)
+            APManager.shared.songs.remove(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .automatic)
         }
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         APManager.shared.currentIndex = indexPath.row
-        APManager.shared.playAudio(fileName: songs[indexPath.row].fileName)
-        APManager.shared.delegate?.changeSong(song: songs[indexPath.row])
-        APManager.shared.delegatePV?.songChange(song: songs[indexPath.row])
+        APManager.shared.playAudio(fileName: APManager.shared.songs[indexPath.row].fileName)
+        APManager.shared.delegatePVC?.changeSong(song: APManager.shared.songs[indexPath.row])
+        APManager.shared.delegatePV?.songChange(song: APManager.shared.songs[indexPath.row])
         playerView.playPauseButton.setImage(UIImage(systemName: "pause.fill")?.withTintColor(.white).resized(to: buttonSize), for: .normal)
         tableView.reloadData()
     }
@@ -111,12 +99,11 @@ extension MediaViewController: UITableViewDelegate, UITableViewDataSource {
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = MusicTableViewCell(style: .default, reuseIdentifier: "MusicCell")
-        cell.titleLabel.text = songs[indexPath.row].title
-        cell.image.image = songs[indexPath.row].image
+        cell.titleLabel.text = APManager.shared.songs[indexPath.row].title
+        cell.image.image = APManager.shared.songs[indexPath.row].image
         return cell
     }
     func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-        songs.swapAt(sourceIndexPath.row, destinationIndexPath.row)
         APManager.shared.songs.swapAt(sourceIndexPath.row, destinationIndexPath.row)
         if APManager.shared.isPlaying {
             APManager.shared.currentIndex? = destinationIndexPath.row
@@ -180,7 +167,7 @@ extension MediaViewController {
             self?.navigationItem.leftBarButtonItem?.tintColor = .white
             if APManager.shared.isPlaying {
                 self?.playerView.playPause()
-                APManager.shared.delegate?.pause()
+                APManager.shared.delegatePVC?.pause()
             }
             self?.vm.disabled = false
             self?.vm.buttonLabel = "start"
@@ -216,8 +203,7 @@ extension MediaViewController: UIDocumentPickerDelegate {
                     let AudioFile = Audio(fileName: fileName,title: title,artist: artist, duration: duration, imageData: imageData)
                     if !APManager.shared.songs.contains(AudioFile) {
                         APManager.shared.songs.insert(AudioFile, at: APManager.shared.songs.count)
-                        songs.insert(AudioFile, at: songs.count)
-                        tableView.insertRows(at: [IndexPath(row: songs.count - 1, section: 0)], with: .automatic)
+                        tableView.insertRows(at: [IndexPath(row: APManager.shared.songs.count - 1, section: 0)], with: .automatic)
                     }
                 }
             }
@@ -228,7 +214,7 @@ extension MediaViewController: UIDocumentPickerDelegate {
 extension MediaViewController {
     func setupView() {
         overrideUserInterfaceStyle = .dark
-
+        PlayerVC?.modalPresentationStyle = .fullScreen
         let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(add))
         addButton.tintColor = .white
 
