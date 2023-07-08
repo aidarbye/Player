@@ -6,7 +6,7 @@ protocol PlayerViewSongControllerProtocol {
     func songChange(song: Audio)
 }
 
-class PlayerView: UIView {
+final class PlayerView: UIView {
     let label = UILabel()
     let progress = UIProgressView()
     let playPauseButton = UIButton()

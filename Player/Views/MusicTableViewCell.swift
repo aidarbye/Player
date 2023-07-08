@@ -1,6 +1,6 @@
 import UIKit
 
-class MusicTableViewCell: UITableViewCell {
+final class MusicTableViewCell: UITableViewCell {
     let titleLabel = UILabel()
     let image = UIImageView(image: UIImage(systemName: "music.note"))
     

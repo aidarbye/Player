@@ -9,12 +9,12 @@ protocol MediaViewControllerDelegate {
     func nowSelectedAudio()
 }
 
-class MediaViewController: UIViewController, MediaViewControllerDelegate {
+final class MediaViewController: UIViewController, MediaViewControllerDelegate {
     let buttonSize = CGSize(width: 20, height: 20)
     let tableView = UITableView()
     let playerView = PlayerView()
     var vm: TimerViewModel = TimerViewModel()
-    var PlayerVC: PlayerViewController? = PlayerViewController()
+    var PlayerVC = PlayerViewController()
     var timer: Timer?
 
     var cancellable: AnyCancellable?
@@ -31,11 +31,7 @@ class MediaViewController: UIViewController, MediaViewControllerDelegate {
     }
     override func viewWillAppear(_ animated: Bool) {
         tableView.reloadData()
-        if APManager.shared.isPlaying {
-            playerView.playPauseButton.setImage(UIImage(systemName: "pause")?.withTintColor(.white).resized(to: buttonSize), for: .normal)
-        } else {
-            playerView.playPauseButton.setImage(UIImage(systemName: "play")?.withTintColor(.white).resized(to: buttonSize), for: .normal)
-        }
+        changePicture(buttonSize: buttonSize, button: playerView.playPauseButton)
         if let value = APManager.shared.audioPlayer?.currentTime(),
            let duration = APManager.shared.audioPlayer?.currentItem?.duration {
                 self.playerView.progress.setProgress(Float(value.seconds / duration.seconds),
@@ -110,18 +106,21 @@ extension MediaViewController: UITableViewDelegate, UITableViewDataSource {
         }
     }
 }
-
+func changePicture(buttonSize: CGSize, button: UIButton) {
+    let image = APManager.shared.isPlaying
+    ? UIImage(systemName: "pause")?.withTintColor(.white).resized(to: buttonSize)
+    : UIImage(systemName: "play")?.withTintColor(.white).resized(to: buttonSize)
+    button.setImage(image, for: .normal)
+}
 // MARK: @objc methods
 extension MediaViewController {
     @objc private func swipeGesture(_ gestureRecognizer: UISwipeGestureRecognizer) {
         if gestureRecognizer.state == .ended {
-            guard let pvc = PlayerVC else {return}
-            present(pvc, animated: true)
+            present(PlayerVC, animated: true)
         }
     }
     @objc private func tapGesture() {
-        guard let pvc = PlayerVC else { return }
-        present(pvc, animated: true)
+        present(PlayerVC, animated: true)
     }
     @objc private func add() {
         let supportedTypes: [UTType] = [UTType.audio]
@@ -214,7 +213,7 @@ extension MediaViewController: UIDocumentPickerDelegate {
 extension MediaViewController {
     func setupView() {
         overrideUserInterfaceStyle = .dark
-        PlayerVC?.modalPresentationStyle = .fullScreen
+        PlayerVC.modalPresentationStyle = .fullScreen
         let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(add))
         addButton.tintColor = .white
 

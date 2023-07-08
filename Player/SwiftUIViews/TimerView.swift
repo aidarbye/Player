@@ -43,12 +43,8 @@ struct TimerView: View {
                 }
                 .disabled(vm.disabled)
                 Button {
-                    if vm.angle == 0 {
-                        return
-                    }
-                    if vm.disabled {
-                        forcedStopTimer.send()
-                    } else {
+                    if vm.angle == 0 { return }
+                    if vm.disabled { forcedStopTimer.send() } else {
                         startTimer.send()
                     }
                     vm.disabled.toggle() 

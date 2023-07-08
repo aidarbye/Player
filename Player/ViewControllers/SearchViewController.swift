@@ -1,7 +1,7 @@
 import UIKit
 import SnapKit
 
-class SearchViewController: UIViewController,UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource {
+final class SearchViewController: UIViewController,UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource {
     let textField = UITextField()
     let cancelButton = UIButton()
     let toggle = UISegmentedControl(items: ["Title", "Author"])

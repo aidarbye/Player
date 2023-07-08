@@ -7,7 +7,7 @@ protocol PlayerViewControllerDelegate {
     func pause()
 }
 
-class PlayerViewController: UIViewController {
+final class PlayerViewController: UIViewController {
     let buttonSize = CGSize(width: 33, height: 30)
     let imageView = UIImageView()
     let slider = UISlider()
@@ -32,11 +32,7 @@ class PlayerViewController: UIViewController {
         if let value = APManager.shared.audioPlayer?.currentTime() {
             self.slider.value = Float(value.seconds)
         }
-        if APManager.shared.isPlaying {
-            self.PlayPauseButton.setImage(UIImage(systemName: "pause.fill")?.withTintColor(.white).resized(to: buttonSize), for: .normal)
-        } else {
-            self.PlayPauseButton.setImage(UIImage(systemName: "play.fill")?.withTintColor(.white).resized(to: buttonSize), for: .normal)
-        }
+        changePicture(buttonSize: buttonSize, button: PlayPauseButton)
         if timer == nil {
             timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] (_) in
                 if APManager.shared.isPlaying {
@@ -51,9 +47,6 @@ class PlayerViewController: UIViewController {
         timer?.invalidate()
         timer = nil
     }
-    func pause() {
-        self.PlayPauseButton.setImage(UIImage(systemName: "play.fill")?.withTintColor(.white).resized(to: buttonSize), for: .normal)
-    }
 }
 
 // MARK: objc methods
@@ -61,8 +54,10 @@ extension PlayerViewController {
     @objc func repeatAction() {
         switch SettingsManager.shared.settings.repeating {
         case .off: Repeat.tintColor = .red
-            Repeat.setImage(UIImage(systemName: "repeat.1")?.withTintColor(.white).resized(to: buttonSize), for: .normal)
-        case .oneSong: Repeat.setImage(UIImage(systemName: "repeat")?.withTintColor(.white).resized(to: buttonSize), for: .normal)
+            Repeat.setImage(UIImage(systemName: "repeat.1")?.withTintColor(.white).resized(to: buttonSize),
+                            for: .normal)
+        case .oneSong: Repeat.setImage(UIImage(systemName: "repeat")?.withTintColor(.white).resized(to: buttonSize),
+                                       for: .normal)
             Repeat.tintColor = .white
         }
         SettingsManager.shared.nextRepeat()
@@ -75,11 +70,7 @@ extension PlayerViewController {
     }
     @objc func playStop() {
         APManager.shared.playPause()
-        if APManager.shared.isPlaying {
-            PlayPauseButton.setImage(UIImage(systemName: "pause.fill")?.withTintColor(.white).resized(to: buttonSize), for: .normal)
-        } else {
-            PlayPauseButton.setImage(UIImage(systemName: "play.fill")?.withTintColor(.white).resized(to: buttonSize), for: .normal)
-        }
+        changePicture(buttonSize: buttonSize, button: PlayPauseButton)
     }
     @objc func NextMusicPlay() {
         APManager.shared.playNextSong()
@@ -102,7 +93,6 @@ extension PlayerViewController {
         if let audioPlayer = APManager.shared.audioPlayer {
             APManager.shared.isPlaying = false
             audioPlayer.pause()
-            print(sender.value)
         }
     }
     @objc private func swipeGesture(_ gestureRecognizer: UIPanGestureRecognizer) {
@@ -122,6 +112,9 @@ extension PlayerViewController: PlayerViewControllerDelegate {
         self.slider.maximumValue = APManager.shared.songs[APManager.shared.currentIndex!].duration
         self.titleLabel.text = song.title
         self.artistLabel.text = song.artist
+    }
+    func pause() {
+        self.PlayPauseButton.setImage(UIImage(systemName: "play.fill")?.withTintColor(.white).resized(to: buttonSize), for: .normal)
     }
 }
 // MARK: UI

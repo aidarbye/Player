@@ -1,6 +1,6 @@
 import Foundation
 
-class StorageManager {
+final class StorageManager {
     static let shared = StorageManager()
     let keyForLibrary = "musicLibrary"
     let keyForSettings = "settings"
