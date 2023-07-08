@@ -4,6 +4,7 @@ import Foundation
 
 protocol PlayerViewSongControllerProtocol {
     func songChange(song: Audio)
+    func pause()
 }
 
 final class PlayerView: UIView {
@@ -30,6 +31,9 @@ final class PlayerView: UIView {
 
 //MARK: PlayerViewSongControllerProtocol methods
 extension PlayerView: PlayerViewSongControllerProtocol {
+    func pause() {
+        changePicture(buttonSize: buttonSize, button: playPauseButton)
+    }
     func songChange(song: Audio) {
         self.label.text = song.title
     }

@@ -103,10 +103,14 @@ final class APManager: NSObject, UIDocumentPickerDelegate {
         let commandCenter = MPRemoteCommandCenter.shared()
         commandCenter.playCommand.addTarget { [unowned self] event in
             self.playPause()
+            delegatePVC?.pause()
+            delegatePV?.pause()
             return .success
         }
         commandCenter.pauseCommand.addTarget { [unowned self] event in
             self.playPause()
+            delegatePVC?.pause()
+            delegatePV?.pause()
             return .success
         }
         commandCenter.nextTrackCommand.addTarget { [unowned self] event in
