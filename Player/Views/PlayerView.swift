@@ -24,11 +24,7 @@ final class PlayerView: UIView {
     
     @objc func playPause() {
         APManager.shared.playPause()
-        if APManager.shared.isPlaying {
-            playPauseButton.setImage(UIImage(systemName: "pause.fill")?.withTintColor(.white).resized(to: buttonSize), for: .normal)
-        } else {
-            playPauseButton.setImage(UIImage(systemName: "play.fill")?.withTintColor(.white).resized(to: buttonSize), for: .normal)
-        }
+        changePicture(buttonSize: buttonSize, button: playPauseButton)
     }
 }
 

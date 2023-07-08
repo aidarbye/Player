@@ -106,12 +106,6 @@ extension MediaViewController: UITableViewDelegate, UITableViewDataSource {
         }
     }
 }
-func changePicture(buttonSize: CGSize, button: UIButton) {
-    let image = APManager.shared.isPlaying
-    ? UIImage(systemName: "pause")?.withTintColor(.white).resized(to: buttonSize)
-    : UIImage(systemName: "play")?.withTintColor(.white).resized(to: buttonSize)
-    button.setImage(image, for: .normal)
-}
 // MARK: @objc methods
 extension MediaViewController {
     @objc private func swipeGesture(_ gestureRecognizer: UISwipeGestureRecognizer) {
@@ -146,13 +140,13 @@ extension MediaViewController {
         }
     }
     
-    @objc private func timerAction() { // <- REMAKE!
+    @objc private func timerAction() {
         cancellable = host.rootView.startTimer.sink { [weak self] in
             self?.navigationItem.leftBarButtonItem?.tintColor = .orange
             self?.timerTV = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
                 if self!.vm.progress > 0 {
-                    if self!.vm.progress - 1/60 > 0 {
-                        self?.vm.progress -= 1/60
+                    if self!.vm.progress - 0.00027778 > 0 {
+                        self?.vm.progress -= 0.00027778
                         self?.vm.angle = self!.vm.progress * 360
                     } else {
                         self?.vm.progress = 0
@@ -189,20 +183,23 @@ extension MediaViewController: UIDocumentPickerDelegate {
         let fileManager = FileManager.default
         let documentsDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
         for url in urls {
-            let fileName = url.lastPathComponent
-            let destinationURL = documentsDirectory.appendingPathComponent(fileName)
-            do { try fileManager.moveItem(at: url, to: destinationURL) } catch {  }
-            Task {
+            let destinationURL = documentsDirectory.appendingPathComponent(url.lastPathComponent)
+            DispatchQueue.main.async {
+                do { try fileManager.moveItem(at: url, to: destinationURL) } catch {  }
+            }
+            Task { [weak self] in
                 if let metadata = await metadataManager.getMetadataFromURL(selectedUrl: destinationURL) {
                     let imageData = await metadataManager.getImageFromMetadata(metadata: metadata)
                     let artist = await metadataManager.getArtistFromMetadata(metadata: metadata)
                     let title = await metadataManager.getTitleFromMetadata(metadata: metadata)
-                    let duration = await metadataManager.getDurationFromUrl(selectedUrl: url)
-                    let fileName = url.absoluteURL.lastPathComponent
+                    let duration = await metadataManager.getDurationFromUrl(selectedUrl: destinationURL)
+                    let fileName = destinationURL.absoluteURL.lastPathComponent
                     let AudioFile = Audio(fileName: fileName,title: title,artist: artist, duration: duration, imageData: imageData)
                     if !APManager.shared.songs.contains(AudioFile) {
                         APManager.shared.songs.insert(AudioFile, at: APManager.shared.songs.count)
-                        tableView.insertRows(at: [IndexPath(row: APManager.shared.songs.count - 1, section: 0)], with: .automatic)
+                        self?.tableView.insertRows(
+                            at: [IndexPath(row: APManager.shared.songs.count - 1, section: 0)],
+                            with: .automatic)
                     }
                 }
             }

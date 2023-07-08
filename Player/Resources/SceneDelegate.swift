@@ -29,7 +29,26 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.makeKeyAndVisible()
     }
     
-    func sceneDidDisconnect(_ scene: UIScene) {
+    func sceneDidDisconnect(_ scene: UIScene) {        
+        let fileManager = FileManager.default
+        guard let documentDirectoryURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
+        do {
+            let fileURLs = try fileManager.contentsOfDirectory(
+                at: documentDirectoryURL,
+                includingPropertiesForKeys: nil)
+            for fileURL in fileURLs {
+                if APManager.shared.songs.contains(where: { Audio in
+                    Audio.fileName == fileURL.lastPathComponent
+                }) {
+                    print("существует \(fileURL.lastPathComponent)")
+                } else {
+                    try fileManager.removeItem(at: fileURL)
+                    print("removed successfully \(fileURL.lastPathComponent)")
+                }
+            }
+        } catch {
+            print("Error listing files in document directory: \(error.localizedDescription)")
+        }
         StorageManager.shared.save(songs: APManager.shared.songs)
         StorageManager.shared.saveSettings(settings: SettingsManager.shared.settings)
         // Called as the scene is being released by the system.

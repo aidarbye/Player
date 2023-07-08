@@ -10,7 +10,7 @@ final class MetadataManager {
         } catch {
          print(error.localizedDescription)
         }
-        return nil
+        return [AVMetadataItem()]
     }
     func getImageFromMetadata(metadata: [AVMetadataItem]) async -> Data {
         do {
@@ -60,4 +60,21 @@ final class MetadataManager {
         }
         return 0.0
     }
+    func listFilesInDocumentDirectory() {
+        let fileManager = FileManager.default
+        guard let documentDirectoryURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first else {
+            print("Document directory not found.")
+            return
+        }
+        
+        do {
+            let fileURLs = try fileManager.contentsOfDirectory(at: documentDirectoryURL, includingPropertiesForKeys: nil)
+            for fileURL in fileURLs {
+                print(fileURL.lastPathComponent)
+            }
+        } catch {
+            print("Error listing files in document directory: \(error.localizedDescription)")
+        }
+    }
+
 }

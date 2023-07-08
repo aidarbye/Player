@@ -215,84 +215,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "C64562BF-BE6D-4D2B-B263-8718DC51AD4C"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Player/ViewControllers/MediaViewController.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "196"
-            endingLineNumber = "196"
-            landmarkName = "documentPicker(_:didPickDocumentsAt:)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "C64562BF-BE6D-4D2B-B263-8718DC51AD4C - e4c92079365e0b13"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 @Sendable () async -&gt; () in Player.MediaViewController.documentPicker(_: __C.UIDocumentPickerViewController, didPickDocumentsAt: Swift.Array&lt;Foundation.URL&gt;) -&gt; ()"
-                  moduleName = "Player"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/aidarnurkin/Documents/Developer/Player/Player/ViewControllers/MediaViewController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "149"
-                  endingLineNumber = "149"
-                  offsetFromSymbolStart = "324">
-               </Location>
-               <Location
-                  uuid = "C64562BF-BE6D-4D2B-B263-8718DC51AD4C - 3a99544649274651"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(1) await resume partial function for closure #1 @Sendable () async -&gt; () in Player.MediaViewController.documentPicker(_: __C.UIDocumentPickerViewController, didPickDocumentsAt: Swift.Array&lt;Foundation.URL&gt;) -&gt; ()"
-                  moduleName = "Player"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/aidarnurkin/Documents/Developer/Player/Player/ViewControllers/MediaViewController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "149"
-                  endingLineNumber = "149"
-                  offsetFromSymbolStart = "44">
-               </Location>
-               <Location
-                  uuid = "C64562BF-BE6D-4D2B-B263-8718DC51AD4C - 3755cec80cdb00a4"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(2) suspend resume partial function for closure #1 @Sendable () async -&gt; () in Player.MediaViewController.documentPicker(_: __C.UIDocumentPickerViewController, didPickDocumentsAt: Swift.Array&lt;Foundation.URL&gt;) -&gt; ()"
-                  moduleName = "Player"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/aidarnurkin/Documents/Developer/Player/Player/ViewControllers/MediaViewController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "149"
-                  endingLineNumber = "149"
-                  offsetFromSymbolStart = "72">
-               </Location>
-               <Location
-                  uuid = "C64562BF-BE6D-4D2B-B263-8718DC51AD4C - 615041275d8c1d81"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(10) suspend resume partial function for closure #1 @Sendable () async -&gt; () in Player.MediaViewController.documentPicker(_: __C.UIDocumentPickerViewController, didPickDocumentsAt: Swift.Array&lt;Foundation.URL&gt;) -&gt; ()"
-                  moduleName = "Player"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/aidarnurkin/Documents/Developer/Player/Player/ViewControllers/MediaViewController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "149"
-                  endingLineNumber = "149"
-                  offsetFromSymbolStart = "1480">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "9A34A2C0-1FB4-428B-8248-73D71DB80175"
             shouldBeEnabled = "No"
             ignoreCount = "0"
@@ -316,8 +238,8 @@
             filePath = "Player/ViewControllers/MediaViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "118"
-            endingLineNumber = "118"
+            startingLineNumber = "112"
+            endingLineNumber = "112"
             landmarkName = "swipeGesture(_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -364,8 +286,8 @@
             filePath = "Player/Views/PlayerView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "44"
-            endingLineNumber = "44"
+            startingLineNumber = "40"
+            endingLineNumber = "40"
             landmarkName = "setupView()"
             landmarkType = "7">
          </BreakpointContent>

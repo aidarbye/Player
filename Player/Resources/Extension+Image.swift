@@ -7,3 +7,9 @@ extension UIImage {
         }
     }
 }
+func changePicture(buttonSize: CGSize, button: UIButton) {
+    let image = APManager.shared.isPlaying
+    ? UIImage(systemName: "pause")?.withTintColor(.white).resized(to: buttonSize)
+    : UIImage(systemName: "play")?.withTintColor(.white).resized(to: buttonSize)
+    button.setImage(image, for: .normal)
+}
