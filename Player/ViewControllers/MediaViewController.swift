@@ -4,9 +4,6 @@ import SnapKit
 import UniformTypeIdentifiers
 import AVKit
 import Combine
-/*
- Optimize some process(like, its should be optional rght?)
-*/
 
 protocol MediaViewControllerDelegate {
     func changeREDselect()
@@ -22,6 +19,7 @@ class MediaViewController: UIViewController, MediaViewControllerDelegate {
     var songs: [Audio] = []
     var cancellable: AnyCancellable?
     var anothercanc: AnyCancellable?
+    var forcedcanc: AnyCancellable?
     var host = UIHostingController(rootView: TimerView(vm: TimerViewModel()))
     var timerTV: Timer?
     
@@ -162,10 +160,10 @@ extension MediaViewController {
         }
     }
     
-    @objc private func timerAction() {
+    @objc private func timerAction() { // <- REMAKE!
         cancellable = host.rootView.startTimer.sink { [weak self] in
+            self?.navigationItem.leftBarButtonItem?.tintColor = .orange
             self?.timerTV = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
-                print("zapusk")
                 if self!.vm.progress > 0 {
                     if self!.vm.progress - 1/60 > 0 {
                         self?.vm.progress -= 1/60
@@ -179,13 +177,22 @@ extension MediaViewController {
             }
         }
         anothercanc = host.rootView.stopTimer.sink { [weak self] in
+            self?.navigationItem.leftBarButtonItem?.tintColor = .white
+            if APManager.shared.isPlaying {
+                self?.playerView.playPause()
+                APManager.shared.delegate?.pause()
+            }
+            self?.vm.disabled = false
+            self?.vm.buttonLabel = "start"
+            self?.timerTV?.invalidate()
+            self?.timerTV = nil
+        }
+        forcedcanc = host.rootView.forcedStopTimer.sink { [weak self] in
+            self?.navigationItem.leftBarButtonItem?.tintColor = .white
             self?.timerTV?.invalidate()
             self?.timerTV = nil
         }
         present(host, animated: true)
-    }
-    private func changeColorOfLeftBatItem() {
-        self.navigationItem.leftBarButtonItem?.tintColor = vm.disabled ? .orange : .white
     }
 }
 

@@ -4,6 +4,7 @@ import MediaPlayer
 
 protocol PlayerViewControllerDelegate {
     func changeSong(song: Audio)
+    func pause()
 }
 
 class PlayerViewController: UIViewController {
@@ -50,6 +51,9 @@ class PlayerViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         timer?.invalidate()
         timer = nil
+    }
+    func pause() {
+        self.PlayPauseButton.setImage(UIImage(systemName: "play.fill")?.withTintColor(.white).resized(to: buttonSize), for: .normal)
     }
 }
 

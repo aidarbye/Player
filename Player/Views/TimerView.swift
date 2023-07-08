@@ -6,6 +6,7 @@ struct TimerView: View {
     
     var startTimer = PassthroughSubject<Void,Never>()
     var stopTimer = PassthroughSubject<Void,Never>()
+    var forcedStopTimer = PassthroughSubject<Void,Never>()
     
     var body: some View {
         NavigationView {
@@ -20,7 +21,6 @@ struct TimerView: View {
                     Circle()
                         .stroke(.gray, style: StrokeStyle(lineWidth: 6, lineCap: .round, lineJoin: .round))
                         .frame(width: vm.size, height: vm.size)
-                    
                     // Progress
                     Circle()
                         .trim(from: 0, to: vm.progress)
@@ -43,8 +43,11 @@ struct TimerView: View {
                 }
                 .disabled(vm.disabled)
                 Button {
+                    if vm.angle == 0 {
+                        return
+                    }
                     if vm.disabled {
-                        stopTimer.send()
+                        forcedStopTimer.send()
                     } else {
                         startTimer.send()
                     }
@@ -65,7 +68,7 @@ struct TimerView: View {
             .preferredColorScheme(.dark)
             .onAppear {
                 vm.angle = vm.progress * 360
-                vm.buttonLabel = vm.disabled ? "Stop" : "Start"
+                vm.buttonLabel = vm.disabled ? "stop" : "start"
             }
             .navigationTitle("Timer")
         }
